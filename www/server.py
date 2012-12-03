@@ -4,6 +4,10 @@ import urllib
 
 from tornado import ioloop, web, template
 from readability.readability import Document
+from sqlalchemy.orm import sessionmaker
+
+import model
+from model import page
 
 SOURCE_DIR = os.path.join(os.environ['HOME'], 'git/laterbox')
 AWS_ACESS_KEY = 'AKIAJO6GMSYEBEBTGFQA'
@@ -17,29 +21,40 @@ class MainHandler(web.RequestHandler):
 
 class AddHandler(web.RequestHandler):
   def s3_callback(self, params):
-    print 'uploaded'
+    session = sessionmaker(bind=model.Base.metadata.bind)()
 
-  def uploadToS3(self, title, body):
+    article = page.Page()
+    article.url = self.url
+    article.title = self.article_title
+    article.md5_hash = self.article_md5
+
+    session.add(article)
+    session.commit()
+    session.close()
+
+  def uploadToS3(self):
     import hashlib
     import base64
     from libs.asyncs3 import AWSAuthConnection
 
-    body = body.encode('ascii', 'ignore')
+    self.article_body = self.article_body.encode('ascii', 'ignore')
+    self.article_md5 = hashlib.md5(self.article_body).digest()
     aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
-    article_dir = base64.b64encode(hashlib.md5(body).digest())+'/'
+    article_dir = base64.b64encode(self.article_md5)+'/'
 
-    aws.put(BUCKET_NAME, article_dir+title, body,
+    aws.put(BUCKET_NAME, article_dir+self.article_title, self.article_body,
       {'Content-Type' : 'text/html', 'x-amz-acl' : 'public-read'},
       callback=self.s3_callback
     )
 
   def post(self):
-    url = self.get_argument('url', None)
-    html = urllib.urlopen(url).read()
-    readable_article = Document(html).summary()
-    readable_title = Document(html).short_title()
+    self.url = self.get_argument('url', None)
+    html = urllib.urlopen(self.url).read()
 
-    self.uploadToS3(readable_title, readable_article)
+    self.article_body = Document(html).summary()
+    self.article_title = Document(html).short_title()
+
+    self.uploadToS3()
 
     self.redirect('/')
 
@@ -53,6 +68,7 @@ handler_list = [
 ]
 
 application = web.Application(handler_list, **settings)
+model.start_engine()
 
 if __name__ == "__main__":
   application.listen(8000)
