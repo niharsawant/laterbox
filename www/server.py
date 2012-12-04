@@ -21,9 +21,13 @@ class MainHandler(web.RequestHandler):
 
 class AddHandler(web.RequestHandler):
   def s3_callback(self, params):
+    from lxml import html
+
     session = sessionmaker(bind=model.Base.metadata.bind)()
 
-    article = page.Page(self.url, self.article_md5, title=self.article_title)
+    info = html.document_fromstring(self.article_body).text_content().strip()[:500]
+    article = page.Page(self.url, self.article_md5,
+      title=self.article_title, description=info)
 
     session.add(article)
     session.commit()
