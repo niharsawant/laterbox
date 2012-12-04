@@ -6,6 +6,7 @@ import json
 from tornado import ioloop, web, template
 from readability.readability import Document
 from sqlalchemy.orm import sessionmaker
+from libs.asyncs3 import AWSAuthConnection
 
 import model
 from model import page
@@ -43,27 +44,36 @@ class ReadHandler(web.RequestHandler):
     self.finish()
 
 class FetchHandler(web.RequestHandler):
-  def get(self):
-    uid = self.get_argument('q', None)
-
-    session = sessionmaker(bind=model.Base.metadata.bind)()
-    article_id = shortner.to_decimal(uid)
-    article = session.query(page.Page).filter_by(id=article_id).one()
+  def s3_download_complete(self, response):
 
     params = dict(
-      uid = uid,
-      url = article.url,
-      title = article.title,
-      description = article.description,
-      created_tstamp = article.created_tstamp.strftime(DATETIME_FORMAT)
+      uid = self.uid,
+      url = self.article.url,
+      body = response.body,
+      title = self.article.title,
+      description = self.article.description,
+      created_tstamp = self.article.created_tstamp.strftime(DATETIME_FORMAT)
     )
 
     self.write(json.dumps({'result': 'SUCCESS', 'article': params}))
-    session.close()
+    self.session.close()
     self.finish()
 
+  @web.asynchronous
+  def get(self):
+    self.uid = self.get_argument('q', None)
+
+    self.session = sessionmaker(bind=model.Base.metadata.bind)()
+    article_id = shortner.to_decimal(self.uid)
+    self.article = self.session.query(page.Page).filter_by(id=article_id).one()
+
+    aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
+    aws.get(BUCKET_NAME, AWS_ARTICLE_DIR+self.article.md5_hash,
+      callback=self.s3_download_complete
+    )
+
 class AddHandler(web.RequestHandler):
-  def s3_callback(self, params):
+  def s3_upload_complete(self, response):
     from lxml import html
 
     info = html.document_fromstring(self.article_body).text_content().strip()[:500]
@@ -76,7 +86,6 @@ class AddHandler(web.RequestHandler):
 
   def uploadToS3(self):
     import hashlib
-    from libs.asyncs3 import AWSAuthConnection
 
     self.article_body = self.article_body.encode('ascii', 'ignore')
     self.article_md5 = hashlib.md5(self.article_body).hexdigest()
@@ -89,7 +98,7 @@ class AddHandler(web.RequestHandler):
     aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
     aws.put(BUCKET_NAME, AWS_ARTICLE_DIR+self.article_md5, self.article_body,
       {'Content-Type' : 'text/html', 'x-amz-acl' : 'public-read'},
-      callback=self.s3_callback
+      callback=self.s3_upload_complete
     )
 
   @web.asynchronous
