@@ -66,20 +66,20 @@ class AddHandler(web.RequestHandler):
   def s3_callback(self, params):
     from lxml import html
 
-    session = sessionmaker(bind=model.Base.metadata.bind)()
+    self.session = sessionmaker(bind=model.Base.metadata.bind)()
 
     info = html.document_fromstring(self.article_body).text_content().strip()[:500]
     article = page.Page(self.url, self.article_md5,
       title=self.article_title, description=info)
 
-    session.add(article)
-    session.commit()
-    session.close()
+    self.session.add(article)
+    self.session.commit()
+    self.session.close()
 
   def uploadToS3(self):
     import hashlib
     from libs.asyncs3 import AWSAuthConnection
-
+    print 'uploading to s3'
     self.article_body = self.article_body.encode('ascii', 'ignore')
     self.article_md5 = hashlib.md5(self.article_body).hexdigest()
     aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
@@ -91,11 +91,23 @@ class AddHandler(web.RequestHandler):
 
   @web.asynchronous
   def post(self):
+    self.session = sessionmaker(bind=model.Base.metadata.bind)()
+
     url = self.get_argument('url', None)
+    exits = self.session.query(page.Page).filter_by(url=url).count()
+    if exits :
+      self.finish()
+      return
+
     doc = urllib.urlopen(url)
     html = doc.read()
 
     self.url = doc.geturl()
+    exits = self.session.query(page.Page).filter_by(url=self.url).count()
+    if exits :
+      self.finish()
+      return
+
     self.article_body = Document(html).summary()
     self.article_title = Document(html).short_title()
 
