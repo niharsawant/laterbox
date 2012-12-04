@@ -14,6 +14,7 @@ from libs import shortner
 SOURCE_DIR = os.path.join(os.environ['HOME'], 'git/laterbox')
 AWS_ACESS_KEY = 'AKIAJO6GMSYEBEBTGFQA'
 AWS_SECRET = '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'
+AWS_ARTICLE_DIR = 'articles/'
 BUCKET_NAME = 's3-apparatus'
 DATETIME_FORMAT = '%m/%d/%Y %H:%M:%S'
 
@@ -77,19 +78,18 @@ class AddHandler(web.RequestHandler):
 
   def uploadToS3(self):
     import hashlib
-    import base64
     from libs.asyncs3 import AWSAuthConnection
 
     self.article_body = self.article_body.encode('ascii', 'ignore')
     self.article_md5 = hashlib.md5(self.article_body).hexdigest()
     aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
-    article_dir = base64.b64encode(self.article_md5)+'/'
 
-    aws.put(BUCKET_NAME, article_dir+self.article_title, self.article_body,
+    aws.put(BUCKET_NAME, AWS_ARTICLE_DIR+self.article_md5, self.article_body,
       {'Content-Type' : 'text/html', 'x-amz-acl' : 'public-read'},
       callback=self.s3_callback
     )
 
+  @web.asynchronous
   def post(self):
     self.url = self.get_argument('url', None)
     html = urllib.urlopen(self.url).read()
