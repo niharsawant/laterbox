@@ -23,10 +23,7 @@ class AddHandler(web.RequestHandler):
   def s3_callback(self, params):
     session = sessionmaker(bind=model.Base.metadata.bind)()
 
-    article = page.Page()
-    article.url = self.url
-    article.title = self.article_title
-    article.md5_hash = self.article_md5
+    article = page.Page(self.url, self.article_md5, title=self.article_title)
 
     session.add(article)
     session.commit()
@@ -38,7 +35,7 @@ class AddHandler(web.RequestHandler):
     from libs.asyncs3 import AWSAuthConnection
 
     self.article_body = self.article_body.encode('ascii', 'ignore')
-    self.article_md5 = hashlib.md5(self.article_body).digest()
+    self.article_md5 = hashlib.md5(self.article_body).hexdigest()
     aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
     article_dir = base64.b64encode(self.article_md5)+'/'
 
