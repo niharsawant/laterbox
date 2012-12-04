@@ -4,6 +4,9 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 Base.metadata = MetaData()
 
+import page
+Page = page.Page
+
 def start_engine():
-  engine = create_engine('mysql://sampadm:secret@localhost/laterbox_db', echo=False)
+  engine = create_engine('mysql://www:password@localhost/laterbox_db', echo=False)
   Base.metadata.bind = engine
