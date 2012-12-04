@@ -1,6 +1,7 @@
 
 import os
 import urllib
+import json
 
 from tornado import ioloop, web, template
 from readability.readability import Document
@@ -8,16 +9,57 @@ from sqlalchemy.orm import sessionmaker
 
 import model
 from model import page
+from libs import shortner
 
 SOURCE_DIR = os.path.join(os.environ['HOME'], 'git/laterbox')
 AWS_ACESS_KEY = 'AKIAJO6GMSYEBEBTGFQA'
 AWS_SECRET = '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'
 BUCKET_NAME = 's3-apparatus'
+DATETIME_FORMAT = '%m/%d/%Y %H:%M:%S'
 
 class MainHandler(web.RequestHandler):
   def get(self):
     file_path = os.path.join(SOURCE_DIR, 'index.html')
     self.write(template.Template(open(file_path).read()).generate())
+    self.finish()
+
+class ReadHandler(web.RequestHandler):
+  def get(self):
+    session = sessionmaker(bind=model.Base.metadata.bind)()
+    article_list = []
+
+    for article in session.query(page.Page).all():
+      article_list.append(dict(
+        uid = shortner.from_decimal(article.id),
+        url = article.url,
+        title = article.title,
+        description = article.description,
+        created_tstamp = article.created_tstamp.strftime(DATETIME_FORMAT)
+      ))
+
+    self.write(json.dumps({'result': 'SUCCESS', 'articles': article_list}))
+    session.close()
+    self.finish()
+
+class FetchHandler(web.RequestHandler):
+  def get(self):
+    uid = self.get_argument('q', None)
+
+    session = sessionmaker(bind=model.Base.metadata.bind)()
+    article_id = shortner.to_decimal(uid)
+    article = session.query(page.Page).filter_by(id=article_id).one()
+
+    params = dict(
+      uid = uid,
+      url = article.url,
+      title = article.title,
+      description = article.description,
+      created_tstamp = article.created_tstamp.strftime(DATETIME_FORMAT)
+    )
+
+    self.write(json.dumps({'result': 'SUCCESS', 'article': params}))
+    session.close()
+    self.finish()
 
 class AddHandler(web.RequestHandler):
   def s3_callback(self, params):
@@ -65,7 +107,9 @@ settings = dict(
 
 handler_list = [
   ('/', MainHandler),
-  ('/add', AddHandler)
+  ('/add', AddHandler),
+  ('/read', ReadHandler),
+  ('/fetch', FetchHandler)
 ]
 
 application = web.Application(handler_list, **settings)

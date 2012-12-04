@@ -1,7 +1,7 @@
 CHAR_MAP = 'DhQSizIlskKenoErBvRUVugabfMLyHFxwNOYPZGACXpctJTWmjdq5624389170'
 
 
-def from_decimal(value, base):
+def from_decimal(value, base=62):
   digits = []
   num = value
   output = ''
@@ -17,7 +17,7 @@ def from_decimal(value, base):
 
   return output
 
-def to_decimal(value, base):
+def to_decimal(value, base=62):
   char_list = list(value)
   char_list.reverse()
   index = output = 0
