@@ -66,8 +66,6 @@ class AddHandler(web.RequestHandler):
   def s3_callback(self, params):
     from lxml import html
 
-    self.session = sessionmaker(bind=model.Base.metadata.bind)()
-
     info = html.document_fromstring(self.article_body).text_content().strip()[:500]
     article = page.Page(self.url, self.article_md5,
       title=self.article_title, description=info)
@@ -79,11 +77,16 @@ class AddHandler(web.RequestHandler):
   def uploadToS3(self):
     import hashlib
     from libs.asyncs3 import AWSAuthConnection
-    print 'uploading to s3'
+
     self.article_body = self.article_body.encode('ascii', 'ignore')
     self.article_md5 = hashlib.md5(self.article_body).hexdigest()
-    aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
+    exists = self.session.query(page.Page).filter_by(md5_hash=self.article_md5).count()
+    if exists :
+      self.finish()
+      self.session.close()
+      return
 
+    aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
     aws.put(BUCKET_NAME, AWS_ARTICLE_DIR+self.article_md5, self.article_body,
       {'Content-Type' : 'text/html', 'x-amz-acl' : 'public-read'},
       callback=self.s3_callback
@@ -94,18 +97,20 @@ class AddHandler(web.RequestHandler):
     self.session = sessionmaker(bind=model.Base.metadata.bind)()
 
     url = self.get_argument('url', None)
-    exits = self.session.query(page.Page).filter_by(url=url).count()
-    if exits :
+    exists = self.session.query(page.Page).filter_by(url=url).count()
+    if exists :
       self.finish()
+      self.session.close()
       return
 
     doc = urllib.urlopen(url)
     html = doc.read()
 
     self.url = doc.geturl()
-    exits = self.session.query(page.Page).filter_by(url=self.url).count()
-    if exits :
+    exists = self.session.query(page.Page).filter_by(url=self.url).count()
+    if exists :
       self.finish()
+      self.session.close()
       return
 
     self.article_body = Document(html).summary()

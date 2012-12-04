@@ -13,7 +13,7 @@ class Page(model.Base):
 
   url = Column(Unicode(255), nullable=False)
   title = Column(Unicode(255))
-  description = Column(Unicode(500))
+  description = Column(String(500))
   md5_hash = Column(Unicode(32), nullable=False, unique=True)
 
   created_tstamp = Column(DateTime, default=datetime.utcnow)
