@@ -91,9 +91,11 @@ class AddHandler(web.RequestHandler):
 
   @web.asynchronous
   def post(self):
-    self.url = self.get_argument('url', None)
-    html = urllib.urlopen(self.url).read()
+    url = self.get_argument('url', None)
+    doc = urllib.urlopen(url)
+    html = doc.read()
 
+    self.url = doc.geturl()
     self.article_body = Document(html).summary()
     self.article_title = Document(html).short_title()
 
