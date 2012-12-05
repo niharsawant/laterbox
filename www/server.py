@@ -6,11 +6,11 @@ import json
 from tornado import ioloop, web, template
 from readability.readability import Document
 from sqlalchemy.orm import sessionmaker
-from libs.asyncs3 import AWSAuthConnection
+from lib.asyncs3 import AWSAuthConnection
 
 import g
 from model import *
-from libs import shortner
+from lib import shortner
 
 class MainHandler(web.RequestHandler):
   def get(self):
