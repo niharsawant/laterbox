@@ -8,28 +8,17 @@ from readability.readability import Document
 from sqlalchemy.orm import sessionmaker
 from libs.asyncs3 import AWSAuthConnection
 
-
+import g
 from model import *
 from libs import shortner
-
-SOURCE_DIR = os.path.join(os.environ['HOME'], 'git/laterbox')
-AWS_ACESS_KEY = 'AKIAJO6GMSYEBEBTGFQA'
-AWS_SECRET = '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'
-AWS_ARTICLE_DIR = 'articles/'
-BUCKET_NAME = 's3-apparatus'
-DATETIME_FORMAT = '%m/%d/%Y %H:%M:%S'
-
-class AppException(Exception):
-  def __init__(self, message):
-    self.message = message
 
 class MainHandler(web.RequestHandler):
   def get(self):
     try:
-      file_path = os.path.join(SOURCE_DIR, 'index.html')
+      file_path = os.path.join(g.SOURCE_DIR, 'index.html')
       self.write(template.Template(open(file_path).read()).generate())
     except Exception, e:
-      print e
+      g.log_error()
       self.write(json.dumps({'result' : 'unknown_error'}))
     finally:
       self.finish()
@@ -46,12 +35,12 @@ class ReadingListHandler(web.RequestHandler):
           url = article.url,
           title = article.title,
           description = article.description,
-          created_tstamp = article.created_tstamp.strftime(DATETIME_FORMAT)
+          created_tstamp = article.created_tstamp.strftime(g.DATETIME_FORMAT)
         ))
 
       self.write(json.dumps({'result': 'SUCCESS', 'articles': article_list}))
     except Exception, e:
-      print e
+      g.log_error()
       self.write(json.dumps({'result' : 'unknown_error'}))
     finally:
       session.close()
@@ -61,19 +50,19 @@ class FetchHandler(web.RequestHandler):
   def s3_download_complete(self, response):
     try:
       if response.error:
-        raise AppException('s3_download_failed')
+        raise g.AppException('s3_download_failed')
       params = dict(
         uid = self.uid,
         url = self.article.url,
         body = response.body,
         title = self.article.title,
         description = self.article.description,
-        created_tstamp = self.article.created_tstamp.strftime(DATETIME_FORMAT)
+        created_tstamp = self.article.created_tstamp.strftime(g.DATETIME_FORMAT)
       )
 
       self.write(json.dumps({'result': 'SUCCESS', 'article': params}))
     except Exception, e:
-      print e.message
+      g.log_error()
       self.write(json.dumps({'result' : 'unknown_error'}))
     finally:
       self.session.close()
@@ -88,12 +77,12 @@ class FetchHandler(web.RequestHandler):
       article_id = shortner.to_decimal(self.uid)
       self.article = self.session.query(Page).filter_by(id=article_id).one()
 
-      aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
-      aws.get(BUCKET_NAME, AWS_ARTICLE_DIR+self.article.md5_hash,
+      aws = AWSAuthConnection(g.AWS_ACESS_KEY, g.AWS_SECRET, is_secure=False)
+      aws.get(g.BUCKET_NAME, g.AWS_ARTICLE_DIR+self.article.md5_hash,
         callback=self.s3_download_complete
       )
     except Exception, e:
-      print e
+      g.log_error()
       self.write(json.dumps({'result' : 'unknown_error'}))
 
 class AddHandler(web.RequestHandler):
@@ -108,7 +97,7 @@ class AddHandler(web.RequestHandler):
       self.session.add(article)
       self.session.commit()
     except Exception, e:
-      print e
+      g.log_error()
       self.write(json.dumps({'result' : 'unknown_error'}))
     finally:
       self.session.close()
@@ -122,20 +111,20 @@ class AddHandler(web.RequestHandler):
 
       exists = self.session.query(Page).filter_by(md5_hash=self.article_md5).count()
       if exists :
-        raise AppException('article_already_exists')
+        raise g.AppException('article_already_exists')
 
-      aws = AWSAuthConnection(AWS_ACESS_KEY, AWS_SECRET, is_secure=False)
-      aws.put(BUCKET_NAME, AWS_ARTICLE_DIR+self.article_md5, self.article_body,
+      aws = AWSAuthConnection(g.AWS_ACESS_KEY, g.AWS_SECRET, is_secure=False)
+      aws.put(g.BUCKET_NAME, g.AWS_ARTICLE_DIR+self.article_md5, self.article_body,
         {'Content-Type' : 'text/html', 'x-amz-acl' : 'public-read'},
         callback=self.s3_upload_complete
       )
-    except AppException, e:
-      print e
+    except g.AppException, e:
+      g.log_error()
       self.write(json.dumps({'result' : e.message}))
       self.session.close()
       self.finish()
     except Exception, e:
-      print e.message
+      g.log_error()
       self.write(json.dumps({'result' : 'unknown_error'}))
       self.session.close()
 
@@ -147,7 +136,7 @@ class AddHandler(web.RequestHandler):
       url = self.get_argument('url', None)
       exists = self.session.query(Page).filter_by(url=url).count()
       if exists :
-        raise AppException('article_already_exists')
+        raise g.AppException('article_already_exists')
 
       doc = urllib.urlopen(url)
       html = doc.read()
@@ -155,7 +144,7 @@ class AddHandler(web.RequestHandler):
       self.url = doc.geturl()
       exists = self.session.query(Page).filter_by(url=self.url).count()
       if exists :
-        raise AppException('article_already_exists')
+        raise g.AppException('article_already_exists')
 
       self.article_body = Document(html).summary().encode('utf-8')
       self.article_title = Document(html).short_title()
@@ -164,13 +153,13 @@ class AddHandler(web.RequestHandler):
 
       self.redirect('/')
 
-    except AppException, e:
-      print e.message
+    except g.AppException, e:
+      g.log_error()
       self.write(json.dumps({'result' : e.message}))
       self.session.close()
       self.finish()
     except Exception, e:
-      print e
+      g.log_error()
       self.write(json.dumps({'result' : 'unknown_error'}))
       self.session.close()
       self.finish()
