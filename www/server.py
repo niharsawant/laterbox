@@ -61,7 +61,7 @@ class FetchHandler(web.RequestHandler):
   def s3_download_complete(self, response):
     try:
       if response.error:
-        raise 's3_download_failed'
+        raise AppException('s3_download_failed')
       params = dict(
         uid = self.uid,
         url = self.article.url,
@@ -73,7 +73,7 @@ class FetchHandler(web.RequestHandler):
 
       self.write(json.dumps({'result': 'SUCCESS', 'article': params}))
     except Exception, e:
-      print e
+      print e.message
       self.write(json.dumps({'result' : 'unknown_error'}))
     finally:
       self.session.close()
@@ -112,7 +112,6 @@ class AddHandler(web.RequestHandler):
       self.write(json.dumps({'result' : 'unknown_error'}))
     finally:
       self.session.close()
-      self.finish()
 
   def uploadToS3(self):
     try:
@@ -139,7 +138,6 @@ class AddHandler(web.RequestHandler):
       print e.message
       self.write(json.dumps({'result' : 'unknown_error'}))
       self.session.close()
-      self.finish()
 
   @web.asynchronous
   def post(self):
@@ -157,7 +155,7 @@ class AddHandler(web.RequestHandler):
       self.url = doc.geturl()
       exists = self.session.query(Page).filter_by(url=self.url).count()
       if exists :
-        raise 'article_already_exists'
+        raise AppException('article_already_exists')
 
       self.article_body = Document(html).summary()
       self.article_title = Document(html).short_title()
