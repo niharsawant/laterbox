@@ -236,7 +236,7 @@ class AWSAuthConnection:
 
     # end public methods
 
-    def _make_request(self, method, bucket='', key='', query_args={}, headers={}, data='', metadata={}, callback=None, timeout=0):
+    def _make_request(self, method, bucket='', key='', query_args={}, headers={}, data=None, metadata={}, callback=None, timeout=0):
 
         server = ''
         if bucket == '':
@@ -259,7 +259,7 @@ class AWSAuthConnection:
 
 
         # build the path_argument string
-        # add the ? in all cases since 
+        # add the ? in all cases since
         # signature and credentials follow path args
         if len(query_args):
             path += "?" + query_args_hash_to_string(query_args)
@@ -495,7 +495,7 @@ class ListBucketResponse(Response):
 class ListAllMyBucketsResponse(Response):
     def __init__(self, http_response):
         Response.__init__(self, http_response)
-        if http_response.status < 300: 
+        if http_response.status < 300:
             handler = ListAllMyBucketsHandler()
             xml.sax.parseString(self.body, handler)
             self.entries = handler.entries
@@ -521,7 +521,7 @@ class GetResponse(Response):
 class LocationResponse(Response):
     def __init__(self, http_response):
         Response.__init__(self, http_response)
-        if http_response.status < 300: 
+        if http_response.status < 300:
             handler = LocationHandler()
             xml.sax.parseString(self.body, handler)
             self.location = handler.location
