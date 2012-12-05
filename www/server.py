@@ -117,7 +117,7 @@ class AddHandler(web.RequestHandler):
     try:
       import hashlib
 
-      self.article_body = self.article_body.encode('ascii', 'ignore')
+      self.article_body = self.article_body
       self.article_md5 = hashlib.md5(self.article_body).hexdigest()
 
       exists = self.session.query(Page).filter_by(md5_hash=self.article_md5).count()
@@ -157,7 +157,7 @@ class AddHandler(web.RequestHandler):
       if exists :
         raise AppException('article_already_exists')
 
-      self.article_body = Document(html).summary()
+      self.article_body = Document(html).summary().encode('utf-8')
       self.article_title = Document(html).short_title()
 
       self.uploadToS3()
