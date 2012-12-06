@@ -1,0 +1,46 @@
+.box-shadow(@style) {
+  -webkit-box-shadow: @style;
+  -moz-box-shadow: @style;
+  -o-box-shadow: @style;
+  box-shadow: @style;
+}
+
+.a-launchers, .a-launchers:link, .a-launchers:active,
+.a-launchers:hover, .a-launchers:focus {
+  text-decoration: none;
+}
+
+.list-horz {
+  padding: 0;
+  margin: 0;
+  display: inline-table;
+
+  li { display: inline; }
+}
+
+#nav-topbar {
+  background-color: #202020;
+  font-size: 12px;
+  text-align: center;
+
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+}
+
+#nav-readlist {
+  font-size: 30px;
+  margin : 8px;
+
+  .a-launchers { color : #F6F6F6; }
+}
+
+.nav-readoption {
+  font-family: 'Open Sans', Verdana, Arial, sans-serif;
+  padding: 8px 12px;
+}
+.nav-readoption:hover, .nav-readoption:focus {
+  background-color: #111;
+  outline: none;
+}
