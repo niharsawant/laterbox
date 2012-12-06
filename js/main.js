@@ -1,5 +1,11 @@
 (function() {
 
-  console.log('starting off...');
+  $(document).ready(function() {
+    var app;
+    app = new AppView({
+      el: $('body')
+    });
+    return true;
+  });
 
 }).call(this);

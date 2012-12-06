@@ -1,1 +1,4 @@
-console.log 'starting off...'
+$(document).ready(() ->
+  app = new AppView(el : $ 'body')
+  return true
+)
