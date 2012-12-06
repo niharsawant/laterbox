@@ -25,7 +25,7 @@
         <li><a id="nav-scrapbook" class="a-launchers nav-readoption <% if(type == "scrapbook") { %>nav-scrapbook-selected<% }%>"\
           href="#/scrapbook" data-type="scrapbook" title="">Scrapbook</a></li>\
         <li><a id="nav-archive" class="a-launchers nav-readoption <% if(type == "archive") { %>nav-archive-selected<% }%>"\
-          href="#/archives" data-type="archive" title="">Archive</a></li>\
+          href="#/archive" data-type="archive" title="">Archive</a></li>\
       </ul>\
     ');
       this.$('#nav-topbar').html(readingListTemplate({
@@ -34,16 +34,7 @@
       return true;
     };
 
-    AppView.prototype.events = {
-      'click .nav-readoption': 'changeReadingList'
-    };
-
     AppView.prototype.currentList = '';
-
-    AppView.prototype.changeReadingList = function(ev) {
-      this.currentList = $(ev.target).attr('data-type');
-      return this.render();
-    };
 
     return AppView;
 

@@ -11,7 +11,7 @@ class AppView extends Backbone.View
         <li><a id="nav-scrapbook" class="a-launchers nav-readoption <% if(type == "scrapbook") { %>nav-scrapbook-selected<% }%>"
           href="#/scrapbook" data-type="scrapbook" title="">Scrapbook</a></li>
         <li><a id="nav-archive" class="a-launchers nav-readoption <% if(type == "archive") { %>nav-archive-selected<% }%>"
-          href="#/archives" data-type="archive" title="">Archive</a></li>
+          href="#/archive" data-type="archive" title="">Archive</a></li>
       </ul>
     ')
     @$('#nav-topbar').html(readingListTemplate(
@@ -19,14 +19,7 @@ class AppView extends Backbone.View
     ))
     return true
 
-  events :
-    'click .nav-readoption' : 'changeReadingList'
-
   currentList : ''
-
-  changeReadingList : (ev) ->
-    @currentList = $(ev.target).attr('data-type')
-    @render()
 
 window.AppView = AppView
 
