@@ -23,8 +23,8 @@
       }
       articleTemplate = _.template('\
       <div class="desk-article">\
-        <h3><%= title %></h3>\
-        <p><%= description %></p>\
+        <h3 class="desk-header"><%= title %></h3>\
+        <p class="desk-para"><%= description %></p>\
       </div>\
     ');
       return this.unreadList.each(function(item) {

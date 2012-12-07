@@ -1,3 +1,24 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+body {
+  text-align: center;
+  background-color: #FAFAFC;
+}
+h3 {
+  font-family: 'Signika Negative', Verdana, Arial, sans-serif;
+  font-size: 24px;
+  margin: 0;
+}
+p {
+  font-family: 'PT Serif', Georgia, serif;
+  font-size: 14px;
+}
+form {
+  display: none;
+}
 .a-launchers,
 .a-launchers:link,
 .a-launchers:active,
@@ -17,16 +38,17 @@
   font-size: 12px;
   text-align: center;
   background-color: #202020;
-  background-image: linear-gradient(top, #222 0%, #111 100%);
-  background-image: -o-linear-gradient(top, #222 0%, #111 100%);
-  background-image: -moz-linear-gradient(top, #222 0%, #111 100%);
-  background-image: -webkit-linear-gradient(top, #222 0%, #111 100%);
-  background-image: -ms-linear-gradient(top, #222 0%, #111 100%);
+  background-image: linear-gradient(top, #202020 0%, #111 100%);
+  background-image: -o-linear-gradient(top, #202020 0%, #111 100%);
+  background-image: -moz-linear-gradient(top, #202020 0%, #111 100%);
+  background-image: -webkit-linear-gradient(top, #202020 0%, #111 100%);
+  background-image: -ms-linear-gradient(top, #202020 0%, #111 100%);
   -webkit-box-shadow: 0px 0px 3px #000000;
   -moz-box-shadow: 0px 0px 3px #000000;
   -o-box-shadow: 0px 0px 3px #000000;
   box-shadow: 0px 0px 3px #000000;
-  position: absolute;
+  position: fixed;
+  z-index: 500;
   width: 100%;
   top: 0;
   left: 0;
@@ -71,4 +93,24 @@
   background-image: -moz-linear-gradient(top, #AA6500 0%, #BB6500 100%) !important;
   background-image: -webkit-linear-gradient(top, #AA6500 0%, #BB6500 100%) !important;
   background-image: -ms-linear-gradient(top, #AA6500 0%, #BB6500 100%) !important;
+}
+#desk {
+  text-align: left;
+  width: 1120px;
+  position: relative;
+  display: inline-block;
+  top: 60px;
+}
+.desk-article {
+  vertical-align: top;
+  display: inline-block;
+  width: 350px;
+  margin: 10px;
+  padding: 15px;
+  border: 1px solid #000;
+  background-color: #FFF;
+}
+.desk-para {
+  height: 95px;
+  overflow: hidden;
 }
