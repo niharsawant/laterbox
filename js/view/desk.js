@@ -25,6 +25,10 @@
       <div class="desk-article">\
         <h3 class="desk-header"><%= title %></h3>\
         <p class="desk-para"><%= description %></p>\
+        <div class="desk-pageshadow">\
+          <div class="desk-pageshadow-right"></div>\
+          <div class="desk-pageshadow-left"></div>\
+        </div>\
       </div>\
     ');
       return this.unreadList.each(function(item) {

@@ -18,6 +18,11 @@
   background-image: -webkit-linear-gradient(@style);
   background-image: -ms-linear-gradient(@style);
 }
+.transform(@style) {
+  -webkit-transform : @style;
+  -moz-transform : @style;
+  transform : @style;
+}
 
 * {
   -webkit-box-sizing: border-box;
@@ -99,8 +104,20 @@ form { display: none; }
   margin: 10px;
   padding: 15px;
 
-  border: 1px solid #000;
+  border: 1px solid #EEE;
   background-color: #FFF;
 }
 .desk-para { height : 95px; overflow: hidden; }
-.desk-header {  }
+.desk-pageshadow {
+  position: absolute;
+  z-index: -1;
+  margin-top: -13px;
+}
+.desk-pageshadow-left, .desk-pageshadow-right {
+  display: inline-block;
+  height: 20px;
+  width: 157px;
+  .box-shadow(0px 0px 10px #000);
+  .transform(rotate(5deg));
+}
+.desk-pageshadow-right { .transform(rotate(-5deg)); }

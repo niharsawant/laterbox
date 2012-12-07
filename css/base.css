@@ -107,10 +107,33 @@ form {
   width: 350px;
   margin: 10px;
   padding: 15px;
-  border: 1px solid #000;
+  border: 1px solid #EEE;
   background-color: #FFF;
 }
 .desk-para {
   height: 95px;
   overflow: hidden;
+}
+.desk-pageshadow {
+  position: absolute;
+  z-index: -1;
+  margin-top: -13px;
+}
+.desk-pageshadow-left,
+.desk-pageshadow-right {
+  display: inline-block;
+  height: 20px;
+  width: 157px;
+  -webkit-box-shadow: 0px 0px 10px #000000;
+  -moz-box-shadow: 0px 0px 10px #000000;
+  -o-box-shadow: 0px 0px 10px #000000;
+  box-shadow: 0px 0px 10px #000000;
+  -webkit-transform: rotate(5deg);
+  -moz-transform: rotate(5deg);
+  transform: rotate(5deg);
+}
+.desk-pageshadow-right {
+  -webkit-transform: rotate(-5deg);
+  -moz-transform: rotate(-5deg);
+  transform: rotate(-5deg);
 }
