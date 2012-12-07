@@ -29,12 +29,12 @@
       </ul>\
     ');
       this.$('#nav-topbar').html(readingListTemplate({
-        'type': this.currentList
+        'type': this.currListType
       }));
       return true;
     };
 
-    AppView.prototype.currentList = '';
+    AppView.prototype.currListType = '';
 
     return AppView;
 

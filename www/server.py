@@ -28,23 +28,27 @@ class ReadingListHandler(web.RequestHandler):
     try:
       session = sessionmaker(bind=Base.metadata.bind)()
       article_list = []
-
       for article in session.query(Page).all():
         article_list.append(dict(
-          uid = shortner.from_decimal(article.id),
+          q = shortner.from_decimal(article.id),
           url = article.url,
           title = article.title,
           description = article.description,
           created_tstamp = article.created_tstamp.strftime(g.DATETIME_FORMAT)
         ))
 
-      self.write(json.dumps({'result': 'SUCCESS', 'articles': article_list}))
-    except Exception, e:
-      g.log_error()
-      self.write(json.dumps({'result' : 'unknown_error'}))
-    finally:
+      self.write(json.dumps(article_list))
       session.close()
       self.finish()
+    except Exception, e:
+      session.close()
+      self.error = e
+      self.send_error()
+
+  def write_error(self, status_code):
+    g.log_error()
+    self.set_header('Content-Type', 'text/plain')
+    self.finish('{ "message" : "%s" }' % self.error.message)
 
 class FetchHandler(web.RequestHandler):
   def s3_download_complete(self, response):

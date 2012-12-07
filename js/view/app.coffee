@@ -15,11 +15,11 @@ class AppView extends Backbone.View
       </ul>
     ')
     @$('#nav-topbar').html(readingListTemplate(
-      'type' : @currentList
+      'type' : @currListType
     ))
     return true
 
-  currentList : ''
+  currListType : ''
 
 window.AppView = AppView
 

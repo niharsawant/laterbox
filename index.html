@@ -7,12 +7,16 @@
   <script type="text/javascript" src="/js/lib/underscore-min.js"></script>
   <script type="text/javascript" src="/js/lib/backbone-min.js"></script>
 
+  <script type="text/javascript" src="/js/model/article.js"></script>
+  <script type="text/javascript" src="/js/collection/unread.js"></script>
+  <script type="text/javascript" src="/js/view/desk.js"></script>
   <script type="text/javascript" src="/js/view/app.js"></script>
   <script type="text/javascript" src="/js/router.js"></script>
   <script type="text/javascript" src="/js/main.js"></script>
 </head>
 <body>
-  <div id="nav-topbar">test</div>
+  <div id="nav-topbar"></div>
+  <div id="desk"></div>
   <form action="/add" method="post" accept-charset="utf-8">
     <input type="text" name="url" value="">
     <input type="submit" name="" value="Submit">
