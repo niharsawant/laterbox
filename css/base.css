@@ -5,16 +5,14 @@
 }
 body {
   text-align: center;
-  background-color: #FAFAFC;
+  background-color: #F6F6F6;
 }
 h3 {
   font-family: 'Signika Negative', Verdana, Arial, sans-serif;
-  font-size: 24px;
   margin: 0;
 }
 p {
   font-family: 'PT Serif', Georgia, serif;
-  font-size: 14px;
 }
 form {
   display: none;
@@ -96,7 +94,7 @@ form {
 }
 #desk {
   text-align: left;
-  width: 1120px;
+  width: 1060px;
   position: relative;
   display: inline-block;
   top: 60px;
@@ -104,7 +102,7 @@ form {
 .desk-article {
   vertical-align: top;
   display: inline-block;
-  width: 350px;
+  width: 330px;
   margin: 10px;
   padding: 15px;
   border: 1px solid #EEE;
@@ -113,6 +111,12 @@ form {
 .desk-para {
   height: 95px;
   overflow: hidden;
+  color: #666;
+  font-size: 14px;
+}
+.desk-header {
+  color: #333;
+  font-size: 24px;
 }
 .desk-pageshadow {
   position: absolute;
@@ -123,7 +127,7 @@ form {
 .desk-pageshadow-right {
   display: inline-block;
   height: 20px;
-  width: 157px;
+  width: 147px;
   -webkit-box-shadow: 0px 0px 10px #000000;
   -moz-box-shadow: 0px 0px 10px #000000;
   -o-box-shadow: 0px 0px 10px #000000;
@@ -136,4 +140,45 @@ form {
   -webkit-transform: rotate(-5deg);
   -moz-transform: rotate(-5deg);
   transform: rotate(-5deg);
+}
+@media all and (max-width: 2000px) {
+  #desk {
+    width: 1420px;
+  }
+}
+@media all and (max-width: 1480px) {
+  #desk {
+    width: 1060px;
+  }
+  .desk-article {
+    width: 330px;
+  }
+  .desk-para {
+    font-size: 14px;
+  }
+  .desk-header {
+    font-size: 24px;
+  }
+  .desk-pageshadow-left,
+  .desk-pageshadow-right {
+    width: 147px;
+  }
+}
+@media all and (max-width: 1100px) {
+  #desk {
+    width: 900px;
+  }
+  .desk-article {
+    width: 275px;
+  }
+  .desk-para {
+    font-size: 12px;
+  }
+  .desk-header {
+    font-size: 18px;
+  }
+  .desk-pageshadow-left,
+  .desk-pageshadow-right {
+    width: 120px;
+  }
 }
