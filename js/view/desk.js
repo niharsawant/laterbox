@@ -32,7 +32,7 @@
       </div>\
     ');
       return this.unreadList.each(function(item) {
-        return $(_this.el).append(articleTemplate(item.toJSON()));
+        return _this.$('#desk').append(articleTemplate(item.toJSON()));
       });
     };
 
@@ -40,14 +40,22 @@
       'click .desk-article': 'getArticle'
     };
 
+    DeskView.prototype.loadArticle = function(model) {
+      $('body').addClass('body-takeback-scale');
+      $('#desk').addClass('body-takeback-blur');
+      $('#nav-topbar').addClass('body-takeback-blur');
+      return $('#reader').html(model.get('body'));
+    };
+
     DeskView.prototype.getArticle = function(ev) {
-      var article, id;
+      var article, id,
+        _this = this;
       id = $(ev.currentTarget).data('id');
       article = this.unreadList.get(id);
       console.log(article.id);
       return article.fetch({
         success: function(model, response) {
-          return console.log(response);
+          return _this.loadArticle.call(_this, model);
         },
         error: function(model, err) {
           return console.log(err);

@@ -17,6 +17,24 @@ p {
 form {
   display: none;
 }
+.body-takeback-scale {
+  background-color: #333;
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  transform: scale(0.9);
+}
+.body-takeback-animate {
+  -webkit-transition: 0.3s all ease-in;
+  -moz-transition: 0.3s all ease-in;
+  -o-transition: 0.3s all ease-in;
+  transition: 0.3s all ease-in;
+}
+.body-takeback-blur {
+  -webkit-filter: blur(1px);
+  -moz-filter: blur(1px);
+  -o-filter: blur(1px);
+  filter: blur(1px);
+}
 .a-launchers,
 .a-launchers:link,
 .a-launchers:active,
@@ -92,6 +110,18 @@ form {
   background-image: -webkit-linear-gradient(top, #AA6500 0%, #BB6500 100%) !important;
   background-image: -ms-linear-gradient(top, #AA6500 0%, #BB6500 100%) !important;
 }
+#container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-top: 10px;
+  z-index: 1;
+  background-color: #F6F6F6;
+}
 #desk {
   text-align: left;
   width: 1060px;
@@ -140,6 +170,19 @@ form {
   -webkit-transform: rotate(-5deg);
   -moz-transform: rotate(-5deg);
   transform: rotate(-5deg);
+}
+#reader {
+  position: absolute;
+  z-index: 1000;
+  top: 0;
+  background-color: #FDFDFD;
+  -webkit-transform: none;
+  -moz-transform: none;
+  transform: none;
+  -webkit-filter: none;
+  -moz-filter: none;
+  -o-filter: none;
+  filter: none;
 }
 @media all and (max-width: 2000px) {
   #desk {

@@ -6,7 +6,7 @@
       el: $('body')
     });
     desk = new DeskView({
-      el: $('#desk')
+      el: $('#container')
     });
     app_router = new AppRouter();
     app_router.on('route:getReadingList', function(action, page) {

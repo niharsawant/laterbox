@@ -1,6 +1,6 @@
 $(document).ready(() ->
   app = new AppView(el : $ 'body')
-  desk = new DeskView(el : $ '#desk')
+  desk = new DeskView(el : $ '#container')
 
   app_router = new AppRouter()
   app_router.on('route:getReadingList', (action, page) ->

@@ -14,19 +14,27 @@ class DeskView extends Backbone.View
         </div>
       </div>
     ')
-    @unreadList.each( (item)=> $(@el).append(articleTemplate(item.toJSON())) )
+    @unreadList.each( (item)=>
+      @$('#desk').append(articleTemplate(item.toJSON())) )
 
   events :
     'click .desk-article' : 'getArticle'
+
+  loadArticle : (model) ->
+    $('body').addClass('body-takeback-scale')
+    $('#desk').addClass('body-takeback-blur')
+    $('#nav-topbar').addClass('body-takeback-blur')
+
+    $('#reader').html(model.get('body'))
 
   getArticle : (ev) ->
     id = $(ev.currentTarget).data('id')
     article = @unreadList.get(id)
     console.log article.id
     article.fetch(
-      success : (model, response) ->
-        console.log response
-      error : (model, err) ->
+      success : (model, response) =>
+        @loadArticle.call(@, model)
+      error : (model, err) =>
         console.log err
     )
   unreadList : []
