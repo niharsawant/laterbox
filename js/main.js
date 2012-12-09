@@ -1,11 +1,11 @@
 (function() {
 
   $(document).ready(function() {
-    var app, app_router, desk;
+    var app, app_router;
     app = new AppView({
       el: $('body')
     });
-    desk = new DeskView({
+    app.desk = new DeskView({
       el: $('#container')
     });
     app_router = new AppRouter();
@@ -14,11 +14,11 @@
       app.currListType = action;
       if (action === 'unread') {
         unreadList = new UnreadCollection();
-        desk.unreadList = unreadList;
+        app.desk.unreadList = unreadList;
         unreadList.fetch({
           success: function(collection, response, options) {
             console.log('fetched unread items');
-            return desk.render();
+            return app.desk.render();
           },
           error: function(collection, err) {
             return console.log(JSON.parse(err.responseText));
@@ -28,6 +28,7 @@
       return app.render();
     });
     Backbone.history.start();
+    window.app = app;
     return true;
   });
 

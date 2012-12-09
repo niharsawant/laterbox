@@ -1,17 +1,17 @@
 $(document).ready(() ->
   app = new AppView(el : $ 'body')
-  desk = new DeskView(el : $ '#container')
+  app.desk = new DeskView(el : $ '#container')
 
   app_router = new AppRouter()
   app_router.on('route:getReadingList', (action, page) ->
     app.currListType = action
     if action is 'unread'
       unreadList = new UnreadCollection()
-      desk.unreadList = unreadList
+      app.desk.unreadList = unreadList
       unreadList.fetch(
         success : (collection, response, options) ->
           console.log('fetched unread items')
-          desk.render()
+          app.desk.render()
         error : (collection, err) ->
           console.log(JSON.parse(err.responseText))
       )
@@ -19,6 +19,7 @@ $(document).ready(() ->
   )
 
   Backbone.history.start()
+  window.app = app
 
   return true
 )
