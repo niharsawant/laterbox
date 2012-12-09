@@ -40,6 +40,10 @@
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+
+  ::-webkit-scrollbar { width: 9px; }
+  ::-webkit-scrollbar-thumb { border-radius: 10px; background-color: #777; }
+  ::-webkit-scrollbar-thumb:hover { background-color: #999; }
 }
 
 body { text-align: center; background-color: #F6F6F6; }
@@ -109,7 +113,7 @@ form { display: none; }
 
 #container {
   position: absolute;
-  left: 0; top: 0;
+  left: -3px; top: 60px;
   width: 100%; height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
@@ -124,7 +128,6 @@ form { display: none; }
 
   position: relative;
   display: inline-block;
-  top : 60px;
 }
 .desk-article {
   vertical-align: top;
