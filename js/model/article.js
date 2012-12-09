@@ -12,14 +12,16 @@
     }
 
     Article.prototype.defaults = {
-      q: null,
+      id: null,
       title: '',
       description: ''
     };
 
+    Article.prototype.urlRoot = '/article';
+
     Article.prototype.validate = function(attributes) {
-      if (attributes.q === null) {
-        return 'q can not be null';
+      if (attributes.id === null) {
+        return 'id can not be null';
       }
       if (attributes.url === null) {
         return 'URL can not be empty';

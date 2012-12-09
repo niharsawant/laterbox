@@ -30,7 +30,7 @@ class ReadingListHandler(web.RequestHandler):
       article_list = []
       for article in session.query(Page).all():
         article_list.append(dict(
-          q = shortner.from_decimal(article.id),
+          id = shortner.from_decimal(article.id),
           url = article.url,
           title = article.title,
           description = article.description,
@@ -50,13 +50,13 @@ class ReadingListHandler(web.RequestHandler):
     self.set_header('Content-Type', 'text/plain')
     self.finish('{ "message" : "%s" }' % self.error.message)
 
-class FetchHandler(web.RequestHandler):
+class ArticleHandler(web.RequestHandler):
   def s3_download_complete(self, response):
     try:
       if response.error:
         raise g.AppException('s3_download_failed')
       params = dict(
-        uid = self.uid,
+        id = self.uid,
         url = self.article.url,
         body = response.body,
         title = self.article.title,
@@ -64,7 +64,7 @@ class FetchHandler(web.RequestHandler):
         created_tstamp = self.article.created_tstamp.strftime(g.DATETIME_FORMAT)
       )
 
-      self.write(json.dumps({'result': 'SUCCESS', 'article': params}))
+      self.write(json.dumps(params))
     except Exception, e:
       g.log_error()
       self.write(json.dumps({'result' : 'unknown_error'}))
@@ -73,9 +73,9 @@ class FetchHandler(web.RequestHandler):
       self.finish()
 
   @web.asynchronous
-  def get(self):
+  def get(self, id):
     try:
-      self.uid = self.get_argument('q', None)
+      self.uid = id
 
       self.session = sessionmaker(bind=Base.metadata.bind)()
       article_id = shortner.to_decimal(self.uid)
@@ -175,7 +175,7 @@ settings = dict(
 handler_list = [
   ('/', MainHandler),
   ('/add', AddHandler),
-  ('/fetch', FetchHandler),
+  ('/article/([^_].*)', ArticleHandler),
   ('/read', ReadingListHandler),
 
   ('/js/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'js')}),

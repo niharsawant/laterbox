@@ -22,7 +22,7 @@
         return true;
       }
       articleTemplate = _.template('\
-      <div class="desk-article">\
+      <div class="desk-article" data-id="<%= id %>">\
         <h3 class="desk-header"><%= title %></h3>\
         <p class="desk-para"><%= description %></p>\
         <div class="desk-pageshadow">\
@@ -33,6 +33,25 @@
     ');
       return this.unreadList.each(function(item) {
         return $(_this.el).append(articleTemplate(item.toJSON()));
+      });
+    };
+
+    DeskView.prototype.events = {
+      'click .desk-article': 'getArticle'
+    };
+
+    DeskView.prototype.getArticle = function(ev) {
+      var article, id;
+      id = $(ev.currentTarget).data('id');
+      article = this.unreadList.get(id);
+      console.log(article.id);
+      return article.fetch({
+        success: function(model, response) {
+          return console.log(response);
+        },
+        error: function(model, err) {
+          return console.log(err);
+        }
       });
     };
 

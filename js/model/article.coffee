@@ -1,11 +1,13 @@
 class Article extends Backbone.Model
   defaults :
-    q : null
+    id : null
     title : ''
     description : ''
 
+  urlRoot : '/article'
+
   validate : (attributes) ->
-    if attributes.q is null then return 'q can not be null'
+    if attributes.id is null then return 'id can not be null'
     if attributes.url is null then return 'URL can not be empty'
 
 window.Article = Article
