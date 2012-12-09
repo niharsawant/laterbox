@@ -4,7 +4,7 @@ import urllib
 import json
 
 from tornado import ioloop, web, template
-from readability.readability import Document
+from lib.readability.readability import Document
 from sqlalchemy.orm import sessionmaker
 from lib.asyncs3 import AWSAuthConnection
 
