@@ -23,6 +23,13 @@
   -moz-transform : @style;
   transform : @style;
 }
+.transform-origin(@value) {
+  -webkit-transform-origin: @value;
+  -moz-transform-origin: @value;
+  -ms-transform-origin: @value;
+  -o-transform-origin: @value;
+  transform-origin: @value;
+}
 .transition(@style) {
   -webkit-transition: @style;
   -moz-transition: @style;
@@ -46,7 +53,7 @@
   ::-webkit-scrollbar-thumb:hover { background-color: #999; }
 }
 
-body { text-align: center; background-color: #F6F6F6; }
+body { text-align: center; background-color: #333; overflow: hidden; }
 
 h3 {
   font-family: 'Signika Negative', Verdana, Arial, sans-serif;
@@ -57,12 +64,22 @@ p { font-family: 'PT Serif', Georgia, serif; }
 
 form { display: none; }
 
-.body-takeback-scale{
-  background-color: #333;
-  .transform(scale(0.9));
+.couch-desk { .transition(0.3s all ease-in); .transform-origin(50% 50%); }
+.couch-reader {
+  visibility: hidden;
+  .transition(0.3s all ease-in);
+  .transform-origin(50% 50%);
+  .transform(scale(0.85));
 }
-.body-takeback-animate { .transition(0.3s all ease-in); }
-.body-takeback-blur { .filter(blur(1px)); }
+.couch-curtain { .transform(scale(1.2)); visibility: hidden; }
+
+.couch-active {
+  .couch-desk {.transform(scale(0.9)); }
+  .couch-reader { visibility: visible; .transform(scale(1.1)); }
+  .couch-far { opacity: 0.5; /*or .filter(blur(1px));*/ }
+  .couch-curtain { visibility: visible; }
+}
+.couch-deactive { .transition(none); }
 
 .a-launchers, .a-launchers:link, .a-launchers:active,
 .a-launchers:hover, .a-launchers:focus {
@@ -113,11 +130,11 @@ form { display: none; }
 
 #container {
   position: absolute;
-  left: -3px; top: 60px;
+  left: 0; top: 0;
   width: 100%; height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-top: 10px;
+  padding-top: 70px;
   z-index: 1;
 
   background-color: #F6F6F6;
@@ -160,9 +177,17 @@ form { display: none; }
   z-index: 1000;
   top: 0;
   background-color: #FDFDFD;
+  width: 800px;
+  height: 800px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 
-  .transform(none);
-  .filter(none);
+#curtain {
+  position: absolute;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 600;
 }
 
 @media all and(max-width: 2000px) {

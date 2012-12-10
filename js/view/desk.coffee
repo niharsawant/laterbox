@@ -3,7 +3,7 @@ class DeskView extends Backbone.View
     @render()
 
   render : () ->
-    $(@el).height($(window).height()-75)
+    $(@el).height($(window).height()-70)
 
     if @unreadList.length is 0 then return true
     articleTemplate = _.template('
@@ -20,14 +20,11 @@ class DeskView extends Backbone.View
       @$('#desk').append(articleTemplate(item.toJSON())) )
 
   events :
-    'click .desk-article' : 'getArticle'
+    'click .desk-article' : 'loadArticle'
 
   loadArticle : (model) ->
-    $(app.el).addClass('body-takeback-scale')
-    $(app.$('#nav-topbar')).addClass('body-takeback-blur')
-    @$('#desk').addClass('body-takeback-blur')
-
-    $(app.$('#reader')).html(model.get('body'))
+    #console.log 'loading article ', model.id
+    $(document).find('html').addClass('couch-active')
 
   getArticle : (ev) ->
     id = $(ev.currentTarget).data('id')

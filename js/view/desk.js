@@ -18,7 +18,7 @@
     DeskView.prototype.render = function() {
       var articleTemplate,
         _this = this;
-      $(this.el).height($(window).height() - 75);
+      $(this.el).height($(window).height() - 70);
       if (this.unreadList.length === 0) {
         return true;
       }
@@ -38,14 +38,11 @@
     };
 
     DeskView.prototype.events = {
-      'click .desk-article': 'getArticle'
+      'click .desk-article': 'loadArticle'
     };
 
     DeskView.prototype.loadArticle = function(model) {
-      $(app.el).addClass('body-takeback-scale');
-      $(app.$('#nav-topbar')).addClass('body-takeback-blur');
-      this.$('#desk').addClass('body-takeback-blur');
-      return $(app.$('#reader')).html(model.get('body'));
+      return $(document).find('html').addClass('couch-active');
     };
 
     DeskView.prototype.getArticle = function(ev) {
