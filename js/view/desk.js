@@ -42,19 +42,9 @@
     };
 
     DeskView.prototype.getArticle = function(ev) {
-      var article, id,
-        _this = this;
+      var id;
       id = $(ev.currentTarget).data('id');
-      article = this.unreadList.get(id);
-      console.log(article.id);
-      return article.fetch({
-        success: function(model, response) {
-          return app.couch.render(model);
-        },
-        error: function(model, err) {
-          return console.log(err);
-        }
-      });
+      return window.location.href = '/#/article/' + id;
     };
 
     DeskView.prototype.unreadList = [];

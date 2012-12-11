@@ -24,14 +24,7 @@ class DeskView extends Backbone.View
 
   getArticle : (ev) ->
     id = $(ev.currentTarget).data('id')
-    article = @unreadList.get(id)
-    console.log article.id
-    article.fetch(
-      success : (model, response) =>
-        app.couch.render(model)
-      error : (model, err) =>
-        console.log err
-    )
+    window.location.href = '/#/article/'+id
   unreadList : []
 
 window.DeskView = DeskView

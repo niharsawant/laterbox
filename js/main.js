@@ -30,6 +30,19 @@
       }
       return app.render();
     });
+    app_router.on('route:getArticle', function(id) {
+      var article,
+        _this = this;
+      article = app.desk.unreadList.get(id);
+      return article.fetch({
+        success: function(model, response) {
+          return app.couch.render(model);
+        },
+        error: function(model, err) {
+          return console.log(err);
+        }
+      });
+    });
     Backbone.history.start();
     window.app = app;
     return true;

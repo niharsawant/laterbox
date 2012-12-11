@@ -12,6 +12,7 @@
     }
 
     AppRouter.prototype.routes = {
+      'article/:id': 'getArticle',
       ':list/:page': 'getReadingList',
       ':list': 'getReadingList'
     };

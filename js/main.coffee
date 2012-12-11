@@ -18,6 +18,15 @@ $(document).ready(() ->
       )
     app.render()
   )
+  app_router.on('route:getArticle', (id) ->
+    article = app.desk.unreadList.get(id)
+    article.fetch(
+      success : (model, response) =>
+        app.couch.render(model)
+      error : (model, err) =>
+        console.log err
+    )
+  )
 
   Backbone.history.start()
   window.app = app
