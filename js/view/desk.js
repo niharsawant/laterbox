@@ -26,9 +26,13 @@
       }
       this.$('#desk').empty();
       articleTemplate = _.template('\
-      <div class="desk-article" data-id="<%= id %>">\
-        <h3 class="desk-header"><%= title %></h3>\
+      <div class="desk-article">\
+        <h3 class="desk-header" data-id="<%= id %>"><%= title %></h3>\
         <p class="desk-para"><%= description %></p>\
+        <a href="http://<%=domain%>" class="desk-meta">\
+          <img class="desk-favicon"\
+            src="http://www.google.com/s2/u/0/favicons?domain=<%= domain%>" />\
+            <%= domain %></a>\
         <div class="desk-pageshadow">\
           <div class="desk-pageshadow-right"></div>\
           <div class="desk-pageshadow-left"></div>\
@@ -37,13 +41,20 @@
     ');
       if (list) {
         return list.each(function(item) {
-          return _this.$('#desk').append(articleTemplate(item.toJSON()));
+          var domain;
+          domain = item.get('url').replace('http://', '').replace('https://', '').split(/[/?]/)[0];
+          return _this.$('#desk').append(articleTemplate({
+            id: item.get('id'),
+            title: item.get('title'),
+            description: item.get('description'),
+            domain: domain
+          }));
         });
       }
     };
 
     DeskView.prototype.events = {
-      'click .desk-article': 'getArticle'
+      'click .desk-header': 'getArticle'
     };
 
     DeskView.prototype.currListType = '';
