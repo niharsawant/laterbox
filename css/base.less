@@ -53,7 +53,7 @@
   ::-webkit-scrollbar-thumb:hover { background-color: #999; }
 }
 
-body { text-align: center; background-color: #333; overflow: hidden; }
+body { text-align: center; overflow: hidden; }
 
 h3 {
   font-family: 'Signika Negative', Verdana, Arial, sans-serif;
@@ -73,7 +73,11 @@ p { font-family: 'PT Serif', Georgia, serif; }
 
 form { display: none; }
 
-.couch-desk { .transition(0.3s all ease-in); .transform-origin(50% 50%); }
+.couch-desk {
+  background-color: #F6F6F6;
+  .transition(0.3s all ease-in);
+  .transform-origin(50% 50%);
+}
 .couch-reader {
   visibility: hidden;
   .transition(0.3s all ease-in);
@@ -83,7 +87,7 @@ form { display: none; }
 .couch-curtain { .transform(scale(1.2)); visibility: hidden; }
 
 .couch-active {
-  .couch-desk {.transform(scale(0.9)); }
+  .couch-desk {.transform(scale(0.9)); background-color: #333; }
   .couch-reader { visibility: visible; .transform(scale(1.1)); }
   .couch-far { opacity: 0.5; /*or .filter(blur(1px));*/ }
   .couch-curtain { visibility: visible; }
