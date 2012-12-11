@@ -20,11 +20,12 @@ class DeskView extends Backbone.View
       @$('#desk').append(articleTemplate(item.toJSON())) )
 
   events :
-    'click .desk-article' : 'loadArticle'
+    'click .desk-article' : 'getArticle'
 
   loadArticle : (model) ->
     #console.log 'loading article ', model.id
     $(document).find('html').addClass('couch-active')
+    $(app.$('#reader')).html(model.get('body'))
 
   getArticle : (ev) ->
     id = $(ev.currentTarget).data('id')

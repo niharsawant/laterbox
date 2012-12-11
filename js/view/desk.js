@@ -38,11 +38,12 @@
     };
 
     DeskView.prototype.events = {
-      'click .desk-article': 'loadArticle'
+      'click .desk-article': 'getArticle'
     };
 
     DeskView.prototype.loadArticle = function(model) {
-      return $(document).find('html').addClass('couch-active');
+      $(document).find('html').addClass('couch-active');
+      return $(app.$('#reader')).html(model.get('body'));
     };
 
     DeskView.prototype.getArticle = function(ev) {

@@ -60,6 +60,15 @@ h3 {
   margin: 0;
 }
 
+a {
+  text-decoration: none;
+  color: #07F;
+
+  &:link { text-decoration: none; }
+  &:active { text-decoration: none; }
+  &:focus { text-decoration: none; }
+  &:hover { text-decoration: none; color: #02F; }
+}
 p { font-family: 'PT Serif', Georgia, serif; }
 
 form { display: none; }
@@ -175,12 +184,23 @@ form { display: none; }
 #reader {
   position: absolute;
   z-index: 1000;
-  top: 0;
   background-color: #FDFDFD;
-  width: 800px;
-  height: 800px;
-  overflow-x: hidden;
-  overflow-y: auto;
+
+  width: 800px; height: 100%;
+  top: 50%; left: 50%;
+  margin-top: -50%; margin-left: -400px;
+
+  text-align: left;
+
+  > div {
+    width: 780px; height: 95%;
+    margin: 25px 10px;
+    overflow: auto;
+    padding: 10px 20px;
+  }
+
+  img { display: block; margin: 10px auto; }
+
 }
 
 #curtain {
