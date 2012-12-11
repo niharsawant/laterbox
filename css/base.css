@@ -236,12 +236,25 @@ form {
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 600;
 }
-@media all and (max-width: 2000px) {
+@media all and (max-width: 1024px) {
   #desk {
-    width: 1420px;
+    width: 900px;
+  }
+  .desk-article {
+    width: 275px;
+  }
+  .desk-para {
+    font-size: 12px;
+  }
+  .desk-header {
+    font-size: 18px;
+  }
+  .desk-pageshadow-left,
+  .desk-pageshadow-right {
+    width: 120px;
   }
 }
-@media all and (max-width: 1480px) {
+@media all and (min-width: 1025px) {
   #desk {
     width: 1060px;
   }
@@ -259,21 +272,8 @@ form {
     width: 147px;
   }
 }
-@media all and (max-width: 1100px) {
+@media all and (min-width: 1480px) {
   #desk {
-    width: 900px;
-  }
-  .desk-article {
-    width: 275px;
-  }
-  .desk-para {
-    font-size: 12px;
-  }
-  .desk-header {
-    font-size: 18px;
-  }
-  .desk-pageshadow-left,
-  .desk-pageshadow-right {
-    width: 120px;
+    width: 1420px;
   }
 }

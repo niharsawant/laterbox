@@ -190,24 +190,24 @@ form { display: none; }
   z-index: 600;
 }
 
-@media all and(max-width: 2000px) {
-  #desk { width: 1420px; }
-}
-@media all and(max-width: 1480px) {
-  #desk { width: 1060px; }
-  .desk-article { width: 330px; }
-  .desk-para { font-size: 14px; }
-  .desk-header { font-size: 24px; }
-  .desk-pageshadow-left, .desk-pageshadow-right { width: 147px; }
-}
-
-@media all and(max-width: 1100px) {
+@media all and(max-width: 1024px) {
   #desk { width: 900px; }
   .desk-article { width: 275px; }
   .desk-para { font-size: 12px; }
   .desk-header { font-size: 18px; }
   .desk-pageshadow-left, .desk-pageshadow-right { width: 120px; }
 }
+@media all and(min-width: 1025px) {
+  #desk { width: 1060px; }
+  .desk-article { width: 330px; }
+  .desk-para { font-size: 14px; }
+  .desk-header { font-size: 24px; }
+  .desk-pageshadow-left, .desk-pageshadow-right { width: 147px; }
+}
+@media all and(min-width: 1480px) {
+  #desk { width: 1420px; }
+}
+
 
 
 
