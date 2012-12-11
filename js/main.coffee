@@ -24,13 +24,29 @@ $(document).ready(() ->
     app.render()
   )
   app_router.on('route:getArticle', (id) ->
-    article = app.desk.unreadList.get(id)
-    article.fetch(
-      success : (model, response) =>
-        app.couch.render(model)
-      error : (model, err) =>
-        console.log err
-    )
+    getArticle = () =>
+      article = app.desk.unreadList.get(id)
+      article.fetch(
+        success : (model, response) =>
+          app.couch.render(model)
+        error : (model, err) =>
+          console.log err
+      )
+
+
+    if app.desk.unreadList.length > 0 then getArticle()
+    else
+      app.desk.currListType = 'unread'
+      app.desk.unreadList = new UnreadCollection()
+      app.desk.render()
+      app.desk.unreadList.fetch(
+        success : (collection, response, options) ->
+          console.log('fetched unread items')
+          app.desk.render()
+          getArticle()
+        error : (collection, err) ->
+          console.log(JSON.parse(err.responseText))
+      )
   )
 
   app.render()

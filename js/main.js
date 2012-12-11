@@ -35,17 +35,37 @@
       return app.render();
     });
     app_router.on('route:getArticle', function(id) {
-      var article,
+      var getArticle,
         _this = this;
-      article = app.desk.unreadList.get(id);
-      return article.fetch({
-        success: function(model, response) {
-          return app.couch.render(model);
-        },
-        error: function(model, err) {
-          return console.log(err);
-        }
-      });
+      getArticle = function() {
+        var article;
+        article = app.desk.unreadList.get(id);
+        return article.fetch({
+          success: function(model, response) {
+            return app.couch.render(model);
+          },
+          error: function(model, err) {
+            return console.log(err);
+          }
+        });
+      };
+      if (app.desk.unreadList.length > 0) {
+        return getArticle();
+      } else {
+        app.desk.currListType = 'unread';
+        app.desk.unreadList = new UnreadCollection();
+        app.desk.render();
+        return app.desk.unreadList.fetch({
+          success: function(collection, response, options) {
+            console.log('fetched unread items');
+            app.desk.render();
+            return getArticle();
+          },
+          error: function(collection, err) {
+            return console.log(JSON.parse(err.responseText));
+          }
+        });
+      }
     });
     app.render();
     Backbone.history.start();
