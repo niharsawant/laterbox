@@ -41,11 +41,6 @@
       'click .desk-article': 'getArticle'
     };
 
-    DeskView.prototype.loadArticle = function(model) {
-      $(document).find('html').addClass('couch-active');
-      return $(app.$('#reader')).html(model.get('body'));
-    };
-
     DeskView.prototype.getArticle = function(ev) {
       var article, id,
         _this = this;
@@ -54,7 +49,7 @@
       console.log(article.id);
       return article.fetch({
         success: function(model, response) {
-          return _this.loadArticle.call(_this, model);
+          return app.couch.render(model);
         },
         error: function(model, err) {
           return console.log(err);

@@ -1,0 +1,18 @@
+class CouchView extends Backbone.View
+  initialize : () -> @reset()
+
+  reset : () -> $(@el).html('')
+
+  render : (model) ->
+    couchTemplate = _.template('
+      <div class="reader-container">
+      <h3 class="reader-title"><%= title %></h3>
+      <div class="reader-content"><%= body %></div>
+      </div>
+    ')
+    $(document).find('html').addClass('couch-active')
+    console.log model
+    $(@el).html(couchTemplate(model.toJSON()))
+
+window.CouchView = CouchView
+

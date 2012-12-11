@@ -22,18 +22,13 @@ class DeskView extends Backbone.View
   events :
     'click .desk-article' : 'getArticle'
 
-  loadArticle : (model) ->
-    #console.log 'loading article ', model.id
-    $(document).find('html').addClass('couch-active')
-    $(app.$('#reader')).html(model.get('body'))
-
   getArticle : (ev) ->
     id = $(ev.currentTarget).data('id')
     article = @unreadList.get(id)
     console.log article.id
     article.fetch(
       success : (model, response) =>
-        @loadArticle.call(@, model)
+        app.couch.render(model)
       error : (model, err) =>
         console.log err
     )

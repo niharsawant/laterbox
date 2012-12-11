@@ -239,7 +239,6 @@ form {
 #reader {
   position: absolute;
   z-index: 1000;
-  background-color: #FDFDFD;
   width: 800px;
   height: 100%;
   top: 50%;
@@ -247,17 +246,28 @@ form {
   margin-top: -50%;
   margin-left: -400px;
   text-align: left;
-}
-#reader > div {
-  width: 780px;
-  height: 95%;
-  margin: 25px 10px;
-  overflow: auto;
-  padding: 10px 20px;
+  background-color: #FDFDFD;
+  -webkit-box-shadow: 0 0 5px #000000;
+  -moz-box-shadow: 0 0 5px #000000;
+  -o-box-shadow: 0 0 5px #000000;
+  box-shadow: 0 0 5px #000000;
 }
 #reader img {
   display: block;
   margin: 10px auto;
+}
+.reader-container {
+  width: 770px;
+  height: 96%;
+  margin: 20px;
+  overflow: auto;
+}
+.reader-title {
+  font-size: 32px;
+  padding: 10px;
+}
+.reader-content {
+  padding: 5px 10px;
 }
 #curtain {
   position: absolute;
