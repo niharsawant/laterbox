@@ -12,8 +12,7 @@
     }
 
     AppView.prototype.initialize = function() {
-      _.bindAll(this, 'render');
-      return this.render();
+      return _.bindAll(this, 'render');
     };
 
     AppView.prototype.render = function() {
@@ -29,7 +28,7 @@
       </ul>\
     ');
       this.$('#nav-topbar').html(readingListTemplate({
-        'type': this.currListType
+        'type': this.desk.currListType
       }));
       return true;
     };
@@ -39,10 +38,8 @@
     };
 
     AppView.prototype.onCurtainClick = function(ev) {
-      return this.couch.reset();
+      return window.location.href = '/#/' + app.desk.currListType;
     };
-
-    AppView.prototype.currListType = '';
 
     return AppView;
 

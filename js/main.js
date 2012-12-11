@@ -13,21 +13,25 @@
     });
     app_router = new AppRouter();
     app_router.on('route:getReadingList', function(action, page) {
-      var unreadList;
-      app.currListType = action;
-      if (action === 'unread') {
-        unreadList = new UnreadCollection();
-        app.desk.unreadList = unreadList;
-        unreadList.fetch({
-          success: function(collection, response, options) {
-            console.log('fetched unread items');
-            return app.desk.render();
-          },
-          error: function(collection, err) {
-            return console.log(JSON.parse(err.responseText));
-          }
-        });
+      app.desk.currListType = action;
+      switch (action) {
+        case 'unread':
+          app.desk.unreadList = new UnreadCollection();
+          app.desk.render();
+          app.desk.unreadList.fetch({
+            success: function(collection, response, options) {
+              console.log('fetched unread items');
+              return app.desk.render();
+            },
+            error: function(collection, err) {
+              return console.log(JSON.parse(err.responseText));
+            }
+          });
+          break;
+        default:
+          app.desk.render();
       }
+      app.couch.reset();
       return app.render();
     });
     app_router.on('route:getArticle', function(id) {
@@ -43,6 +47,7 @@
         }
       });
     });
+    app.render();
     Backbone.history.start();
     window.app = app;
     return true;

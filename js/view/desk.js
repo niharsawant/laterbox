@@ -16,12 +16,15 @@
     };
 
     DeskView.prototype.render = function() {
-      var articleTemplate,
+      var articleTemplate, list,
         _this = this;
       $(this.el).height($(window).height() - 70);
-      if (this.unreadList.length === 0) {
-        return true;
+      if (this.currListType === 'unread') {
+        list = this.unreadList;
+      } else {
+        list = null;
       }
+      this.$('#desk').empty();
       articleTemplate = _.template('\
       <div class="desk-article" data-id="<%= id %>">\
         <h3 class="desk-header"><%= title %></h3>\
@@ -32,14 +35,18 @@
         </div>\
       </div>\
     ');
-      return this.unreadList.each(function(item) {
-        return _this.$('#desk').append(articleTemplate(item.toJSON()));
-      });
+      if (list) {
+        return list.each(function(item) {
+          return _this.$('#desk').append(articleTemplate(item.toJSON()));
+        });
+      }
     };
 
     DeskView.prototype.events = {
       'click .desk-article': 'getArticle'
     };
+
+    DeskView.prototype.currListType = '';
 
     DeskView.prototype.getArticle = function(ev) {
       var id;

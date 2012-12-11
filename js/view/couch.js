@@ -29,7 +29,6 @@
       </div>\
     ');
       $(document).find('html').addClass('couch-active');
-      console.log(model);
       return $(this.el).html(couchTemplate(model.toJSON()));
     };
 

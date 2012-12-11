@@ -5,7 +5,11 @@ class DeskView extends Backbone.View
   render : () ->
     $(@el).height($(window).height()-70)
 
-    if @unreadList.length is 0 then return true
+    if @currListType is 'unread' then list = @unreadList
+    else list = null
+
+    @$('#desk').empty()
+
     articleTemplate = _.template('
       <div class="desk-article" data-id="<%= id %>">
         <h3 class="desk-header"><%= title %></h3>
@@ -16,15 +20,19 @@ class DeskView extends Backbone.View
         </div>
       </div>
     ')
-    @unreadList.each( (item)=>
+
+    if list then list.each((item) =>
       @$('#desk').append(articleTemplate(item.toJSON())) )
 
   events :
     'click .desk-article' : 'getArticle'
 
+  currListType : ''
+
   getArticle : (ev) ->
     id = $(ev.currentTarget).data('id')
     window.location.href = '/#/article/'+id
+
   unreadList : []
 
 window.DeskView = DeskView

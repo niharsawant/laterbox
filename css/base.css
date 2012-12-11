@@ -49,10 +49,10 @@ form {
 }
 .couch-desk {
   background-color: #F6F6F6;
-  -webkit-transition: 0.3s all ease-in;
-  -moz-transition: 0.3s all ease-in;
-  -o-transition: 0.3s all ease-in;
-  transition: 0.3s all ease-in;
+  -webkit-transition: 0.3s all ease-out;
+  -moz-transition: 0.3s all ease-out;
+  -o-transition: 0.3s all ease-out;
+  transition: 0.3s all ease-out;
   -webkit-transform-origin: 50% 50%;
   -moz-transform-origin: 50% 50%;
   -ms-transform-origin: 50% 50%;
@@ -61,10 +61,10 @@ form {
 }
 .couch-reader {
   visibility: hidden;
-  -webkit-transition: 0.3s all ease-in;
-  -moz-transition: 0.3s all ease-in;
-  -o-transition: 0.3s all ease-in;
-  transition: 0.3s all ease-in;
+  -webkit-transition: 0.3s all ease-out;
+  -moz-transition: 0.3s all ease-out;
+  -o-transition: 0.3s all ease-out;
+  transition: 0.3s all ease-out;
   -webkit-transform-origin: 50% 50%;
   -moz-transform-origin: 50% 50%;
   -ms-transform-origin: 50% 50%;

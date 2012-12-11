@@ -1,7 +1,7 @@
 class AppView extends Backbone.View
   initialize : () ->
     _.bindAll(@, 'render')
-    @render()
+    # @render()
 
   render : () ->
     readingListTemplate = _.template('
@@ -15,7 +15,7 @@ class AppView extends Backbone.View
       </ul>
     ')
     @$('#nav-topbar').html(readingListTemplate(
-      'type' : @currListType
+      'type' : @desk.currListType
     ))
     return true
 
@@ -23,9 +23,7 @@ class AppView extends Backbone.View
     'click #curtain' : 'onCurtainClick'
 
   onCurtainClick : (ev) ->
-    @couch.reset()
-
-  currListType : ''
+    window.location.href = '/#/' + app.desk.currListType
 
 window.AppView = AppView
 

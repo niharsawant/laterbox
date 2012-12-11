@@ -13,7 +13,6 @@ class CouchView extends Backbone.View
       </div>
     ')
     $(document).find('html').addClass('couch-active')
-    console.log model
     $(@el).html(couchTemplate(model.toJSON()))
 
 window.CouchView = CouchView
