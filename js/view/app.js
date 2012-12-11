@@ -34,6 +34,14 @@
       return true;
     };
 
+    AppView.prototype.events = {
+      'click #curtain': 'onCurtainClick'
+    };
+
+    AppView.prototype.onCurtainClick = function(ev) {
+      return this.couch.reset();
+    };
+
     AppView.prototype.currListType = '';
 
     return AppView;

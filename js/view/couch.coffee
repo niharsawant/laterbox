@@ -1,7 +1,9 @@
 class CouchView extends Backbone.View
   initialize : () -> @reset()
 
-  reset : () -> $(@el).html('')
+  reset : () ->
+    $(document).find('html').removeClass('couch-active')
+    $(@el).html('')
 
   render : (model) ->
     couchTemplate = _.template('

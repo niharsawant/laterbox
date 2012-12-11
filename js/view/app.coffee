@@ -19,6 +19,12 @@ class AppView extends Backbone.View
     ))
     return true
 
+  events:
+    'click #curtain' : 'onCurtainClick'
+
+  onCurtainClick : (ev) ->
+    @couch.reset()
+
   currListType : ''
 
 window.AppView = AppView

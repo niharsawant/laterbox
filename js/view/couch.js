@@ -16,6 +16,7 @@
     };
 
     CouchView.prototype.reset = function() {
+      $(document).find('html').removeClass('couch-active');
       return $(this.el).html('');
     };
 
