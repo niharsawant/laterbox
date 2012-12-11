@@ -14,10 +14,16 @@
   background-color: #999;
 }
 body {
+  font-family: 'PT Serif', Georgia, serif;
   text-align: center;
   overflow: hidden;
 }
-h3 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Signika Negative', Verdana, Arial, sans-serif;
   margin: 0;
 }
@@ -37,9 +43,6 @@ a:focus {
 a:hover {
   text-decoration: none;
   color: #02F;
-}
-p {
-  font-family: 'PT Serif', Georgia, serif;
 }
 form {
   display: none;
@@ -256,6 +259,9 @@ form {
 #reader img {
   display: block;
   margin: 10px auto;
+  padding: 5px;
+  border: 1px solid #DDD;
+  border-radius: 3px;
 }
 .reader-container {
   width: 770px;

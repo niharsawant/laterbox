@@ -53,9 +53,13 @@
   ::-webkit-scrollbar-thumb:hover { background-color: #999; }
 }
 
-body { text-align: center; overflow: hidden; }
+body {
+  font-family: 'PT Serif', Georgia, serif;
+  text-align: center;
+  overflow: hidden;
+}
 
-h3 {
+h1, h2, h3, h4, h5, h6 {
   font-family: 'Signika Negative', Verdana, Arial, sans-serif;
   margin: 0;
 }
@@ -69,7 +73,6 @@ a {
   &:focus { text-decoration: none; }
   &:hover { text-decoration: none; color: #02F; }
 }
-p { font-family: 'PT Serif', Georgia, serif; }
 
 form { display: none; }
 
@@ -197,7 +200,13 @@ form { display: none; }
   background-color: #FDFDFD;
   .box-shadow(0 0 5px #000);
 
-  img { display: block; margin: 10px auto; }
+  img {
+    display: block;
+    margin: 10px auto;
+    padding: 5px;
+    border: 1px solid #DDD;
+    border-radius: 3px;
+  }
 
 }
 .reader-container {
