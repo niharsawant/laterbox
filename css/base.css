@@ -313,6 +313,14 @@ form {
   padding: 5px;
   border: 1px solid #DDD;
   border-radius: 3px;
+  max-width: 700px;
+}
+#reader pre {
+  border: 1px solid #DDD;
+  padding: 10px;
+  border-radius: 4px;
+  color: #444;
+  background-color: #EEE;
 }
 .reader-container {
   width: 770px;
