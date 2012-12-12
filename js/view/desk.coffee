@@ -3,7 +3,7 @@ class DeskView extends Backbone.View
     @render()
 
   render : () ->
-    $(@el).height($(window).height()-70)
+    $(@el).height($(window).height()-60)
 
     if @currListType is 'unread' then list = @unreadList
     else list = null

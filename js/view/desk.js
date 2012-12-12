@@ -18,7 +18,7 @@
     DeskView.prototype.render = function() {
       var articleTemplate, list,
         _this = this;
-      $(this.el).height($(window).height() - 70);
+      $(this.el).height($(window).height() - 60);
       if (this.currListType === 'unread') {
         list = this.unreadList;
       } else {

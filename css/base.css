@@ -189,13 +189,14 @@ form {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-top: 70px;
+  margin-top: 59px;
   z-index: 1;
   background-color: #F6F6F6;
 }
 #desk {
   text-align: left;
   width: 1060px;
+  margin: 10px 0;
   position: relative;
   display: inline-block;
 }
