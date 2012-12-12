@@ -40,9 +40,15 @@
       getArticle = function() {
         var article;
         article = app.desk.unreadList.get(id);
+        article.set({
+          'isLoading': true
+        });
         return article.fetch({
           success: function(model, response) {
-            return app.couch.render(model);
+            app.couch.render(model);
+            return article.set({
+              'isLoading': false
+            });
           },
           error: function(model, err) {
             return console.log(err);

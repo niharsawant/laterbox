@@ -26,13 +26,14 @@ $(document).ready(() ->
   app_router.on('route:getArticle', (id) ->
     getArticle = () =>
       article = app.desk.unreadList.get(id)
+      article.set('isLoading' : true)
       article.fetch(
         success : (model, response) =>
           app.couch.render(model)
+          article.set('isLoading' : false)
         error : (model, err) =>
           console.log err
       )
-
 
     if app.desk.unreadList.length > 0 then getArticle()
     else

@@ -179,7 +179,8 @@ handler_list = [
   ('/read', ReadingListHandler),
 
   ('/js/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'js')}),
-  ('/css/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'css')})
+  ('/css/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'css')}),
+  ('/img/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'img')})
 ]
 
 application = web.Application(handler_list, **settings)

@@ -262,6 +262,12 @@ form {
   height: 14px;
   vertical-align: middle;
 }
+.desk-loading {
+  width: 14px;
+  height: 14px;
+  display: none;
+  float: right;
+}
 .desk-pageshadow {
   position: absolute;
   z-index: -1;

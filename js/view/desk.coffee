@@ -11,13 +11,14 @@ class DeskView extends Backbone.View
     @$('#desk').empty()
 
     articleTemplate = _.template('
-      <div class="desk-article">
-        <h3 class="desk-header" data-id="<%= id %>"><%= title %></h3>
+      <div class="desk-article" data-id="<%= id %>">
+        <h3 class="desk-header"><%= title %></h3>
         <p class="desk-para"><%= description %></p>
         <a href="http://<%=domain%>" class="desk-meta">
           <img class="desk-favicon"
             src="http://www.google.com/s2/u/0/favicons?domain=<%= domain%>" />
             <%= domain %></a>
+        <img src="/img/wait16trans.gif" class="desk-loading"/>
         <div class="desk-pageshadow">
           <div class="desk-pageshadow-right"></div>
           <div class="desk-pageshadow-left"></div>
@@ -36,12 +37,16 @@ class DeskView extends Backbone.View
     )
 
   events :
-    'click .desk-header' : 'getArticle'
+    'click .desk-header' : 'requestArticle'
 
   currListType : ''
 
-  getArticle : (ev) ->
-    id = $(ev.currentTarget).data('id')
+  setLoadingState : (model, value) ->
+    if value then @$('.desk-article[data-id='+model.id+'] > .desk-loading').show()
+    else @$('.desk-article[data-id='+model.id+'] > .desk-loading').hide()
+
+  requestArticle : (ev) ->
+    id = $(ev.currentTarget).parent('.desk-article').data('id')
     window.location.href = '/#/article/'+id
 
   unreadList : []

@@ -1,7 +1,8 @@
 class Article extends Backbone.Model
   defaults :
-    id : null
-    title : ''
+    id          : null
+    title       : ''
+    isLoading   : false
     description : ''
 
   urlRoot : '/article'

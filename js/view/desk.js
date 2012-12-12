@@ -26,13 +26,14 @@
       }
       this.$('#desk').empty();
       articleTemplate = _.template('\
-      <div class="desk-article">\
-        <h3 class="desk-header" data-id="<%= id %>"><%= title %></h3>\
+      <div class="desk-article" data-id="<%= id %>">\
+        <h3 class="desk-header"><%= title %></h3>\
         <p class="desk-para"><%= description %></p>\
         <a href="http://<%=domain%>" class="desk-meta">\
           <img class="desk-favicon"\
             src="http://www.google.com/s2/u/0/favicons?domain=<%= domain%>" />\
             <%= domain %></a>\
+        <img src="/img/wait16trans.gif" class="desk-loading"/>\
         <div class="desk-pageshadow">\
           <div class="desk-pageshadow-right"></div>\
           <div class="desk-pageshadow-left"></div>\
@@ -54,14 +55,22 @@
     };
 
     DeskView.prototype.events = {
-      'click .desk-header': 'getArticle'
+      'click .desk-header': 'requestArticle'
     };
 
     DeskView.prototype.currListType = '';
 
-    DeskView.prototype.getArticle = function(ev) {
+    DeskView.prototype.setLoadingState = function(model, value) {
+      if (value) {
+        return this.$('.desk-article[data-id=' + model.id + '] > .desk-loading').show();
+      } else {
+        return this.$('.desk-article[data-id=' + model.id + '] > .desk-loading').hide();
+      }
+    };
+
+    DeskView.prototype.requestArticle = function(ev) {
       var id;
-      id = $(ev.currentTarget).data('id');
+      id = $(ev.currentTarget).parent('.desk-article').data('id');
       return window.location.href = '/#/article/' + id;
     };
 

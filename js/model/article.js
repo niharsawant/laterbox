@@ -14,6 +14,7 @@
     Article.prototype.defaults = {
       id: null,
       title: '',
+      isLoading: false,
       description: ''
     };
 
