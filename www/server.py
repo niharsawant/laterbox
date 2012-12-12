@@ -51,6 +51,11 @@ class ReadingListHandler(web.RequestHandler):
     self.finish('{ "message" : "%s" }' % self.error.message)
 
 class ArticleHandler(web.RequestHandler):
+  def write_error(self, status_code):
+    g.log_error()
+    self.set_header('Content-Type', 'text/plain')
+    self.finish('{ "message" : "%s" }' % self.error.message)
+
   def s3_download_complete(self, response):
     try:
       if response.error:
@@ -65,12 +70,12 @@ class ArticleHandler(web.RequestHandler):
       )
 
       self.write(json.dumps(params))
-    except Exception, e:
-      g.log_error()
-      self.write(json.dumps({'result' : 'unknown_error'}))
-    finally:
-      self.session.close()
       self.finish()
+      self.session.close()
+    except Exception, e:
+      self.error = e
+      self.send_error()
+      self.session.close()
 
   @web.asynchronous
   def get(self, id):
@@ -86,8 +91,9 @@ class ArticleHandler(web.RequestHandler):
         callback=self.s3_download_complete
       )
     except Exception, e:
-      g.log_error()
-      self.write(json.dumps({'result' : 'unknown_error'}))
+      self.error = e
+      self.send_error()
+      self.session.close()
 
 class AddHandler(web.RequestHandler):
   def s3_upload_complete(self, response):

@@ -32,7 +32,8 @@ $(document).ready(() ->
           app.couch.render(model)
           article.set('isLoading' : false)
         error : (model, err) =>
-          console.log err
+          article.set('isLoading' : false)
+          console.log(JSON.parse(err.responseText))
       )
 
     if app.desk.unreadList.length > 0 then getArticle()

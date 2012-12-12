@@ -51,7 +51,10 @@
             });
           },
           error: function(model, err) {
-            return console.log(err);
+            article.set({
+              'isLoading': false
+            });
+            return console.log(JSON.parse(err.responseText));
           }
         });
       };
