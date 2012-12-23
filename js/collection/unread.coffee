@@ -3,7 +3,7 @@ class UnreadCollection extends Backbone.Collection
   url : '/read'
   initialize : () ->
     @on('change:isLoading', (model, value) ->
-      app.desk.setLoadingState(model, value)
+      app.views.desk.setLoadingState(model, value)
     )
 
 window.UnreadCollection = UnreadCollection

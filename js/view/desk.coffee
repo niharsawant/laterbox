@@ -1,11 +1,11 @@
 class DeskView extends Backbone.View
-  initialize : () ->
-    @render()
+  initialize : () -> @render()
 
   render : () ->
     $(@el).height($(window).height()-60)
 
-    if @currListType is 'unread' then list = @unreadList
+    if app.views.desk and app.currListType is 'unread'
+      list = app.collections.unread
     else list = null
 
     @$('#desk').empty()
@@ -38,8 +38,6 @@ class DeskView extends Backbone.View
 
   events :
     'click .desk-header' : 'requestArticle'
-
-  currListType : ''
 
   setLoadingState : (model, value) ->
     if value then @$('.desk-article[data-id='+model.id+'] > .desk-loading').show()

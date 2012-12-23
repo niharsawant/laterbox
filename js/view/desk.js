@@ -19,8 +19,8 @@
       var articleTemplate, list,
         _this = this;
       $(this.el).height($(window).height() - 60);
-      if (this.currListType === 'unread') {
-        list = this.unreadList;
+      if (app.views.desk && app.currListType === 'unread') {
+        list = app.collections.unread;
       } else {
         list = null;
       }
@@ -57,8 +57,6 @@
     DeskView.prototype.events = {
       'click .desk-header': 'requestArticle'
     };
-
-    DeskView.prototype.currListType = '';
 
     DeskView.prototype.setLoadingState = function(model, value) {
       if (value) {

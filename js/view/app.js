@@ -28,7 +28,7 @@
       </ul>\
     ');
       this.$('#nav-topbar').html(readingListTemplate({
-        'type': this.desk.currListType
+        'type': app.currListType
       }));
       return true;
     };
@@ -37,8 +37,12 @@
       'click #curtain': 'onCurtainClick'
     };
 
+    AppView.prototype.views = {};
+
+    AppView.prototype.collections = {};
+
     AppView.prototype.onCurtainClick = function(ev) {
-      return window.location.href = '/#/' + app.desk.currListType;
+      return window.location.href = '/#/' + app.currListType;
     };
 
     return AppView;

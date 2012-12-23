@@ -1,60 +1,65 @@
 $(document).ready(() ->
-  app = new AppView(el : $ 'body')
-  app.desk = new DeskView(el : $ '#container')
-  app.couch = new CouchView(el : $ '#reader')
+  window.app =
+    views : {}
+    collections : {}
+    router : {}
+    currListType : null
 
-  app_router = new AppRouter()
-  app_router.on('route:getReadingList', (action, page) ->
-    app.desk.currListType = action
+  app.views.main = new AppView(el : $ 'body')
+  app.views.desk = new DeskView(el : $ '#container')
+  app.views.couch = new CouchView(el : $ '#reader')
+
+  app.router = new AppRouter()
+
+  app.router.on('route:getReadingList', (action, page) ->
+    app.currListType = action
     switch action
       when 'unread'
-        app.desk.unreadList = new UnreadCollection()
-        app.desk.render()
-        app.desk.unreadList.fetch(
+        app.collections.unread = new UnreadCollection()
+        app.views.desk.render()
+        app.collections.unread.fetch(
           success : (collection, response, options) ->
             console.log('fetched unread items')
-            app.desk.render()
+            app.views.desk.render()
           error : (collection, err) ->
             console.log(JSON.parse(err.responseText))
         )
       else
-        app.desk.render()
+        app.views.desk.render()
 
-    app.couch.reset()
-    app.render()
+    app.views.couch.reset()
+    app.views.main.render()
   )
-  app_router.on('route:getArticle', (id) ->
+  app.router.on('route:getArticle', (id) ->
     getArticle = () =>
-      article = app.desk.unreadList.get(id)
+      article = app.collections.unread.get(id)
       article.set('isLoading' : true)
       article.fetch(
         success : (model, response) =>
-          app.couch.render(model)
+          app.views.couch.render(model)
           article.set('isLoading' : false)
         error : (model, err) =>
           article.set('isLoading' : false)
           console.log(JSON.parse(err.responseText))
       )
 
-    if app.desk.unreadList.length > 0 then getArticle()
+    if app.collections.unread then getArticle()
     else
-      app.desk.currListType = 'unread'
-      app.desk.unreadList = new UnreadCollection()
-      app.desk.render()
-      app.desk.unreadList.fetch(
+      app.currListType = 'unread'
+      app.collections.unread = new UnreadCollection()
+      app.views.desk.render()
+      app.collections.unread.fetch(
         success : (collection, response, options) ->
           console.log('fetched unread items')
-          app.desk.render()
+          app.views.desk.render()
           getArticle()
         error : (collection, err) ->
           console.log(JSON.parse(err.responseText))
       )
   )
 
-  app.render()
+  app.views.main.render()
   Backbone.history.start()
-
-  window.app = app
 
   return true
 )

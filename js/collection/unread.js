@@ -17,7 +17,7 @@
 
     UnreadCollection.prototype.initialize = function() {
       return this.on('change:isLoading', function(model, value) {
-        return app.desk.setLoadingState(model, value);
+        return app.views.desk.setLoadingState(model, value);
       });
     };
 
