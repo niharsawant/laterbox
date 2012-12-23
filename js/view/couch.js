@@ -16,12 +16,12 @@
     };
 
     CouchView.prototype.reset = function() {
-      $(document).find('html').removeClass('couch-active');
-      return $(this.el).html('');
+      return $(document).find('html').removeClass('couch-active');
     };
 
     CouchView.prototype.render = function(model) {
       var couchTemplate;
+      $(this.el).html('');
       couchTemplate = _.template('\
       <div class="reader-container">\
       <h3 class="reader-title"><%= title %></h3>\
