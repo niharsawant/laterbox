@@ -3,7 +3,7 @@ import os
 import urllib
 import json
 
-from tornado import ioloop, web, template
+from tornado import ioloop, web, template, httpclient
 from lib.readability.readability import Document
 from sqlalchemy.orm import sessionmaker
 from lib.asyncs3 import AWSAuthConnection
@@ -29,6 +29,11 @@ class BaseHandler(web.RequestHandler):
   def write_error(self, status_code):
     self.set_header('Content-Type', 'text/plain')
     self.finish('{ "message" : "%s" }' % self.error.message)
+
+class _404Handler(BaseHandler):
+  def prepare(self):
+    self.error = httpclient.HTTPError(404, 'Page Not Found')
+    self.send_error(status_code=404)
 
 class WelcomeHandler(BaseHandler):
   def get(self):
@@ -228,14 +233,16 @@ settings = dict(
 handler_list = [
   ('/', MainHandler),
   ('/add', AddHandler),
-  ('/article/([^_].*)', ArticleHandler),
+  ('/article/(.*)', ArticleHandler),
   ('/read', ReadingListHandler),
   ('/welcome', WelcomeHandler),
   ('/logout', LogoutHandler),
 
   ('/js/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'js')}),
   ('/css/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'css')}),
-  ('/img/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'img')})
+  ('/img/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'img')}),
+
+  ('/(.*)', _404Handler)
 ]
 
 application = web.Application(handler_list, **settings)
