@@ -12,16 +12,55 @@ import g
 from model import *
 from lib import shortner
 
+class WelcomeHandler(web.RequestHandler):
+  def get(self):
+    try:
+      file_path = os.path.join(g.SOURCE_DIR, 'html/welcome.html')
+      self.write(template.Template(open(file_path).read()).generate())
+      self.finish()
+    except Exception, e:
+      self.error = e
+      self.send_error()
+
+  def post(self):
+    try:
+      email = self.get_argument('email', None)
+      password = self.get_argument('password', None)
+
+      session = sessionmaker(bind=Base.metadata.bind)()
+
+      import hashlib
+      password_hash = hashlib.sha256(password).hexdigest()
+      reader = Reader(email, password_hash)
+      session.add(reader)
+
+      session.commit()
+      self.redirect('/')
+      session.close()
+    except Exception, e:
+      self.error = e
+      session.close()
+      self.send_error()
+
+  def write_error(self, status_code):
+    g.log_error()
+    self.set_header('Content-Type', 'text/plain')
+    self.finish('{ "message" : "%s" }' % self.error.message)
+
 class MainHandler(web.RequestHandler):
   def get(self):
     try:
-      file_path = os.path.join(g.SOURCE_DIR, 'index.html')
+      file_path = os.path.join(g.SOURCE_DIR, 'html/index.html')
       self.write(template.Template(open(file_path).read()).generate())
-    except Exception, e:
-      g.log_error()
-      self.write(json.dumps({'result' : 'unknown_error'}))
-    finally:
       self.finish()
+    except Exception, e:
+      self.error = e
+      self.send_error()
+
+  def write_error(self, status_code):
+    g.log_error()
+    self.set_header('Content-Type', 'text/plain')
+    self.finish('{ "message" : "%s" }' % self.error.message)
 
 class ReadingListHandler(web.RequestHandler):
   def get(self):
@@ -183,6 +222,7 @@ handler_list = [
   ('/add', AddHandler),
   ('/article/([^_].*)', ArticleHandler),
   ('/read', ReadingListHandler),
+  ('/welcome', WelcomeHandler),
 
   ('/js/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'js')}),
   ('/css/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'css')}),

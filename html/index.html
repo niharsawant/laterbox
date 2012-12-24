@@ -1,0 +1,31 @@
+<html>
+<head>
+  <title>Later Box</title>
+  <link href='http://fonts.googleapis.com/css?family=Signika+Negative' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=PT+Serif' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="/css/base.css">
+
+  <script type="text/javascript" src="/js/lib/jquery-1.8.3.min.js"></script>
+  <script type="text/javascript" src="/js/lib/underscore-min.js"></script>
+  <script type="text/javascript" src="/js/lib/backbone-min.js"></script>
+
+  <script type="text/javascript" src="/js/model/article.js"></script>
+  <script type="text/javascript" src="/js/collection/unread.js"></script>
+  <script type="text/javascript" src="/js/view/couch.js"></script>
+  <script type="text/javascript" src="/js/view/desk.js"></script>
+  <script type="text/javascript" src="/js/view/app.js"></script>
+  <script type="text/javascript" src="/js/router.js"></script>
+  <script type="text/javascript" src="/js/main.js"></script>
+</head>
+<body class="couch-desk">
+  <div id="nav-topbar"></div>
+  <div id="container" class="couch-far"><div id="desk"></div></div>
+  <div id="reader" class="couch-reader"></div>
+  <div id="curtain" class="couch-curtain"></div>
+  <form action="/add" method="post" accept-charset="utf-8">
+    <input type="text" name="url" value="">
+    <input type="submit" name="" value="Submit">
+  </form>
+</body>
+</html>
