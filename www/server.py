@@ -12,15 +12,32 @@ import g
 from model import *
 from lib import shortner
 
-class WelcomeHandler(web.RequestHandler):
+class BaseHandler(web.RequestHandler):
+  def get_logged_user(self):
+    reader_id = self.get_secure_cookie('__user__')
+    session = sessionmaker(bind=Base.metadata.bind)()
+    reader = session.query(Reader).filter(Reader.id == reader_id).first()
+    session.close()
+
+    return reader
+
+  def log_error(self, e):
+    g.log_error()
+    self.error = e
+    self.send_error()
+
+  def write_error(self, status_code):
+    self.set_header('Content-Type', 'text/plain')
+    self.finish('{ "message" : "%s" }' % self.error.message)
+
+class WelcomeHandler(BaseHandler):
   def get(self):
     try:
       file_path = os.path.join(g.SOURCE_DIR, 'html/welcome.html')
       self.write(template.Template(open(file_path).read()).generate())
       self.finish()
     except Exception, e:
-      self.error = e
-      self.send_error()
+      self.log_error(e)
 
   def post(self):
     try:
@@ -59,23 +76,14 @@ class WelcomeHandler(web.RequestHandler):
       else: raise g.AppException('invalid_type')
 
     except Exception, e:
-      self.error = e
-      self.send_error()
+      self.log_error(e)
     finally:
       session.close()
 
-  def write_error(self, status_code):
-    g.log_error()
-    self.set_header('Content-Type', 'text/plain')
-    self.finish('{ "message" : "%s" }' % self.error.message)
-
-class MainHandler(web.RequestHandler):
+class MainHandler(BaseHandler):
   def get(self):
     try:
-      reader_id = self.get_secure_cookie('__user__')
-      session = sessionmaker(bind=Base.metadata.bind)()
-      reader = session.query(Reader).filter(Reader.id == reader_id).first()
-
+      reader = self.get_logged_user()
       if reader:
         file_path = os.path.join(g.SOURCE_DIR, 'html/index.html')
         self.write(template.Template(open(file_path).read()).generate())
@@ -84,17 +92,9 @@ class MainHandler(web.RequestHandler):
         self.redirect('/welcome')
 
     except Exception, e:
-      self.error = e
-      self.send_error()
-    finally:
-      session.close()
+      self.log_error(e)
 
-  def write_error(self, status_code):
-    g.log_error()
-    self.set_header('Content-Type', 'text/plain')
-    self.finish('{ "message" : "%s" }' % self.error.message)
-
-class ReadingListHandler(web.RequestHandler):
+class ReadingListHandler(BaseHandler):
   def get(self):
     try:
       session = sessionmaker(bind=Base.metadata.bind)()
@@ -112,21 +112,10 @@ class ReadingListHandler(web.RequestHandler):
       session.close()
       self.finish()
     except Exception, e:
+      self.log_error(e)
       session.close()
-      self.error = e
-      self.send_error()
 
-  def write_error(self, status_code):
-    g.log_error()
-    self.set_header('Content-Type', 'text/plain')
-    self.finish('{ "message" : "%s" }' % self.error.message)
-
-class ArticleHandler(web.RequestHandler):
-  def write_error(self, status_code):
-    g.log_error()
-    self.set_header('Content-Type', 'text/plain')
-    self.finish('{ "message" : "%s" }' % self.error.message)
-
+class ArticleHandler(BaseHandler):
   def s3_download_complete(self, response):
     try:
       if response.error:
@@ -142,10 +131,9 @@ class ArticleHandler(web.RequestHandler):
 
       self.write(json.dumps(params))
       self.finish()
-      self.session.close()
     except Exception, e:
-      self.error = e
-      self.send_error()
+      self.log_error(e)
+    finally:
       self.session.close()
 
   @web.asynchronous
@@ -162,11 +150,10 @@ class ArticleHandler(web.RequestHandler):
         callback=self.s3_download_complete
       )
     except Exception, e:
-      self.error = e
-      self.send_error()
+      self.log_error(e)
       self.session.close()
 
-class AddHandler(web.RequestHandler):
+class AddHandler(BaseHandler):
   def s3_upload_complete(self, response):
     try:
       from lxml import html
@@ -178,10 +165,7 @@ class AddHandler(web.RequestHandler):
       self.session.add(article)
       self.session.commit()
     except Exception, e:
-      g.log_error()
-      self.write(json.dumps({'result' : 'unknown_error'}))
-    finally:
-      self.session.close()
+      self.log_error(e)
 
   def uploadToS3(self):
     try:
@@ -199,15 +183,9 @@ class AddHandler(web.RequestHandler):
         {'Content-Type' : 'text/html', 'x-amz-acl' : 'public-read'},
         callback=self.s3_upload_complete
       )
-    except g.AppException, e:
-      g.log_error()
-      self.write(json.dumps({'result' : e.message}))
-      self.session.close()
-      self.finish()
+
     except Exception, e:
-      g.log_error()
-      self.write(json.dumps({'result' : 'unknown_error'}))
-      self.session.close()
+      self.log_error(e)
 
   @web.asynchronous
   def post(self):
@@ -234,16 +212,8 @@ class AddHandler(web.RequestHandler):
 
       self.redirect('/')
 
-    except g.AppException, e:
-      g.log_error()
-      self.write(json.dumps({'result' : e.message}))
-      self.session.close()
-      self.finish()
     except Exception, e:
-      g.log_error()
-      self.write(json.dumps({'result' : 'unknown_error'}))
-      self.session.close()
-      self.finish()
+      self.log_error(e)
 
 settings = dict(
   debug=True,
