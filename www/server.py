@@ -80,6 +80,11 @@ class WelcomeHandler(BaseHandler):
     finally:
       session.close()
 
+class LogoutHandler(BaseHandler):
+  def get(self):
+    self.clear_all_cookies()
+    self.redirect('/welcome')
+
 class MainHandler(BaseHandler):
   def get(self):
     try:
@@ -226,6 +231,7 @@ handler_list = [
   ('/article/([^_].*)', ArticleHandler),
   ('/read', ReadingListHandler),
   ('/welcome', WelcomeHandler),
+  ('/logout', LogoutHandler),
 
   ('/js/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'js')}),
   ('/css/(.*)', web.StaticFileHandler, {'path' : os.path.join(g.SOURCE_DIR, 'css')}),
