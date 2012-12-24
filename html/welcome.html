@@ -4,10 +4,12 @@
 </head>
 <body>
   <form action="/welcome" method="post" accept-charset="utf-8">
-    <label>Username</label>
-    <input type="text" name="email" value="">
-    <label>Password</label>
-    <input type="password" name="password" value="">
+    <label>Username: <input type="text" name="email" value=""></label>
+    <label>Password: <input type="password" name="password" value=""></label>
+    <label>
+      <input type="radio" name="type" value="exist" checked>Existing User
+    </label>
+    <label><input type="radio" name="type" value="new">New User</label>
     <input type="submit" name="" value="Login">
   </form>
 </body>

@@ -26,21 +26,43 @@ class WelcomeHandler(web.RequestHandler):
     try:
       email = self.get_argument('email', None)
       password = self.get_argument('password', None)
+      signup_type = self.get_argument('type', None)
+
+      if not email: raise g.AppException('empty_email')
+      if not password: raise g.AppException('empty_password')
+      if not signup_type: raise g.AppException('empty_type')
 
       session = sessionmaker(bind=Base.metadata.bind)()
 
       import hashlib
-      password_hash = hashlib.sha256(password).hexdigest()
-      reader = Reader(email, password_hash)
-      session.add(reader)
 
-      session.commit()
-      self.redirect('/')
-      session.close()
+      if signup_type == 'new':
+        reader = session.query(Reader).filter(Reader.email == email).first()
+        if reader: raise g.AppException('duplicate_found')
+
+        password_hash = hashlib.sha512(password).hexdigest()
+        reader = Reader(email, password_hash)
+        session.add(reader)
+        session.commit()
+
+        self.set_secure_cookie('__user__', str(reader.id))
+        self.redirect('/')
+      elif signup_type == 'exist':
+        reader = session.query(Reader).filter(Reader.email == email).first()
+        password_hash = hashlib.sha512(password).hexdigest()
+
+        if reader is None: raise g.AppException('invalid_email')
+        if reader.password_hash != password_hash: raise g.AppException('invalid_password')
+
+        self.set_secure_cookie('__user__', str(reader.id))
+        self.redirect('/')
+      else: raise g.AppException('invalid_type')
+
     except Exception, e:
       self.error = e
-      session.close()
       self.send_error()
+    finally:
+      session.close()
 
   def write_error(self, status_code):
     g.log_error()
@@ -50,12 +72,22 @@ class WelcomeHandler(web.RequestHandler):
 class MainHandler(web.RequestHandler):
   def get(self):
     try:
-      file_path = os.path.join(g.SOURCE_DIR, 'html/index.html')
-      self.write(template.Template(open(file_path).read()).generate())
-      self.finish()
+      reader_id = self.get_secure_cookie('__user__')
+      session = sessionmaker(bind=Base.metadata.bind)()
+      reader = session.query(Reader).filter(Reader.id == reader_id).first()
+
+      if reader:
+        file_path = os.path.join(g.SOURCE_DIR, 'html/index.html')
+        self.write(template.Template(open(file_path).read()).generate())
+        self.finish()
+      else:
+        self.redirect('/welcome')
+
     except Exception, e:
       self.error = e
       self.send_error()
+    finally:
+      session.close()
 
   def write_error(self, status_code):
     g.log_error()
@@ -214,7 +246,8 @@ class AddHandler(web.RequestHandler):
       self.finish()
 
 settings = dict(
-  debug=True
+  debug=True,
+  cookie_secret=g.COOKIE_SECRET
 )
 
 handler_list = [
