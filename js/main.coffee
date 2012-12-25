@@ -8,6 +8,7 @@ $(document).ready(() ->
   app.views.main = new AppView(el : $ 'body')
   app.views.desk = new DeskView(el : $ '#container')
   app.views.couch = new CouchView(el : $ '#reader')
+  app.views.readPreference = new AppPrefView(el : $ '#readpref')
 
   app.router = new AppRouter()
 

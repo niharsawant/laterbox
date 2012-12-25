@@ -12,21 +12,41 @@ class AppView extends Backbone.View
         <li><a id="nav-archive" class="a-launchers nav-readoption <% if(type == "archive") { %>nav-archive-selected<% }%>"
           href="#/archive" data-type="archive" title="">Archive</a></li>
       </ul>
+
+      <a id="nav-readpref" class="a-launchers nav-preferences">𝌆</a>
     ')
     @$('#nav-topbar').html(readingListTemplate(
       'type' : app.currListType
     ))
-    return true
+    return @
 
   events:
     'click #curtain' : 'onCurtainClick'
+    'click #nav-readpref' : 'launchReadingPreferences'
+    'click' : 'hideControls'
 
   views : {}
 
   collections : {}
 
+  launchReadingPreferences : (ev) ->
+    @$('#nav-readpref').addClass('nav-readpref-selected')
+    app.views.readPreference.render().show()
+    return false
+
+  hideReadingPreferences : (ev) ->
+    @$('#nav-readpref').removeClass('nav-readpref-selected')
+    app.views.readPreference.hide()
+    return false
+
   onCurtainClick : (ev) ->
     window.location.href = '/#/' + app.currListType
+    return false
+
+  hideControls : (ev) ->
+    @hideReadingPreferences(ev)
+    return true
+
 
 window.AppView = AppView
 

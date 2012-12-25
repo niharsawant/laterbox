@@ -219,7 +219,7 @@ class AddHandler(BaseHandler):
       self.article_title = Document(html).short_title()
 
       self.uploadToS3()
-
+      print url
       self.redirect('/')
 
     except Exception, e:

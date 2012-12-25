@@ -16,6 +16,9 @@
     app.views.couch = new CouchView({
       el: $('#reader')
     });
+    app.views.readPreference = new AppPrefView({
+      el: $('#readpref')
+    });
     app.router = new AppRouter();
     app.router.on('route:getReadingList', function(action, page) {
       app.currListType = action;

@@ -26,23 +26,45 @@
         <li><a id="nav-archive" class="a-launchers nav-readoption <% if(type == "archive") { %>nav-archive-selected<% }%>"\
           href="#/archive" data-type="archive" title="">Archive</a></li>\
       </ul>\
+\
+      <a id="nav-readpref" class="a-launchers nav-preferences">𝌆</a>\
     ');
       this.$('#nav-topbar').html(readingListTemplate({
         'type': app.currListType
       }));
-      return true;
+      return this;
     };
 
     AppView.prototype.events = {
-      'click #curtain': 'onCurtainClick'
+      'click #curtain': 'onCurtainClick',
+      'click #nav-readpref': 'launchReadingPreferences',
+      'click': 'hideControls'
     };
 
     AppView.prototype.views = {};
 
     AppView.prototype.collections = {};
 
+    AppView.prototype.launchReadingPreferences = function(ev) {
+      this.$('#nav-readpref').addClass('nav-readpref-selected');
+      app.views.readPreference.render().show();
+      return false;
+    };
+
+    AppView.prototype.hideReadingPreferences = function(ev) {
+      this.$('#nav-readpref').removeClass('nav-readpref-selected');
+      app.views.readPreference.hide();
+      return false;
+    };
+
     AppView.prototype.onCurtainClick = function(ev) {
-      return window.location.href = '/#/' + app.currListType;
+      window.location.href = '/#/' + app.currListType;
+      return false;
+    };
+
+    AppView.prototype.hideControls = function(ev) {
+      this.hideReadingPreferences(ev);
+      return true;
     };
 
     return AppView;
