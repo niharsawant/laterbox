@@ -101,12 +101,13 @@ input[type="text"] {
   .transition(0.3s all ease-out);
   .transform-origin(50% 50%);
   .transform(scale(0.85));
+  opacity: 0.2;
 }
 .couch-curtain { .transform(scale(1.2)); visibility: hidden; }
 
 .couch-active {
-  .couch-desk {.transform(scale(0.9)); background-color: #333; }
-  .couch-reader { visibility: visible; .transform(scale(1.1)); }
+  .couch-desk { .transform(scale(0.9)); background-color: #333; }
+  .couch-reader { visibility: visible; .transform(scale(1.1)); opacity: 1; }
   .couch-far { opacity: 0.5; /*or .filter(blur(1px));*/ }
   .couch-curtain { visibility: visible; }
 }
