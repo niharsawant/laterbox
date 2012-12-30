@@ -107,15 +107,19 @@ class MainHandler(BaseHandler):
 class ReadingListHandler(BaseHandler):
   def get(self):
     try:
+      reader = self.get_logged_user()
+      if not reader:
+        raise g.AppException('auth_failed')
       session = sessionmaker(bind=Base.metadata.bind)()
+
       article_list = []
-      for article in session.query(Page).all():
+      for assoc in reader.article_reader_assoc:
         article_list.append(dict(
-          id = shortner.from_decimal(article.id),
-          url = article.url,
-          title = article.title,
-          description = article.description,
-          created_tstamp = article.created_tstamp.strftime(utils.DATETIME_FORMAT)
+          id = shortner.from_decimal(assoc.article.id),
+          url = assoc.article.url,
+          title = assoc.article.title,
+          description = assoc.article.description,
+          created_tstamp = assoc.article.created_tstamp.strftime(utils.DATETIME_FORMAT)
         ))
 
       self.write(json.dumps(article_list))
@@ -153,7 +157,7 @@ class ArticleHandler(BaseHandler):
 
       self.session = sessionmaker(bind=Base.metadata.bind)()
       article_id = shortner.to_decimal(self.uid)
-      self.article = self.session.query(Page).filter_by(id=article_id).one()
+      self.article = self.session.query(Article).filter_by(id=article_id).one()
 
       aws = AWSAuthConnection(utils.AWS_ACESS_KEY, utils.AWS_SECRET, is_secure=False)
       aws.get(utils.BUCKET_NAME, utils.AWS_ARTICLE_DIR+self.article.md5_hash,
@@ -169,11 +173,13 @@ class AddHandler(BaseHandler):
       from lxml import html
 
       info = html.document_fromstring(self.article_body).text_content().strip()[:500]
-      article = Page(self.url, self.article_md5,
+      article = Article(self.url, self.article_md5,
         title=self.article_title, description=info)
-
       self.session.add(article)
       self.session.commit()
+
+      self.reader.add_article(self.session, article)
+      self.redirect('/')
     except Exception, e:
       self.log_error(e)
 
@@ -184,9 +190,11 @@ class AddHandler(BaseHandler):
       self.article_body = self.article_body
       self.article_md5 = hashlib.md5(self.article_body).hexdigest()
 
-      exists = self.session.query(Page).filter_by(md5_hash=self.article_md5).count()
-      if exists :
-        raise utils.AppException('article_already_exists')
+      article = self.session.query(Article).filter_by(md5_hash=self.article_md5).first()
+      if article :
+        self.reader.add_article(self.session, article)
+        self.redirect('/')
+        return
 
       aws = AWSAuthConnection(utils.AWS_ACESS_KEY, utils.AWS_SECRET, is_secure=False)
       aws.put(utils.BUCKET_NAME, utils.AWS_ARTICLE_DIR+self.article_md5, self.article_body,
@@ -200,27 +208,33 @@ class AddHandler(BaseHandler):
   @web.asynchronous
   def post(self):
     try:
+      self.reader = self.get_logged_user()
+      if not self.reader:
+        raise g.AppException('auth_failed')
+
       self.session = sessionmaker(bind=Base.metadata.bind)()
 
       url = self.get_argument('url', None)
-      exists = self.session.query(Page).filter_by(url=url).count()
-      if exists :
-        raise utils.AppException('article_already_exists')
+      article = self.session.query(Article).filter_by(url=url).first()
+      if article :
+        self.reader.add_article(self.session, article)
+        self.redirect('/')
+        return
 
       doc = urllib.urlopen(url)
       html = doc.read()
 
       self.url = doc.geturl()
-      exists = self.session.query(Page).filter_by(url=self.url).count()
-      if exists :
-        raise utils.AppException('article_already_exists')
+      article = self.session.query(Article).filter_by(url=self.url).first()
+      if article :
+        self.reader.add_article(self.session, article)
+        self.redirect('/')
+        return
 
       self.article_body = Document(html).summary().encode('utf-8')
       self.article_title = Document(html).short_title()
 
       self.uploadToS3()
-      print url
-      self.redirect('/')
 
     except Exception, e:
       self.log_error(e)

@@ -17,6 +17,16 @@ class Reader(model.Base):
 
   created_tstamp = Column(DateTime, default=datetime.utcnow)
 
+  article_reader_assoc = relationship('ArticleReader', lazy='joined')
+
   def __init__(self, email, password_hash):
     self.email = email
     self.password_hash = password_hash
+
+  def add_article(self, session, article):
+    assoc = model.ArticleReader()
+    assoc.reader_id = self.id
+    assoc.article_id = article.id
+
+    session.add(assoc)
+    session.commit()
