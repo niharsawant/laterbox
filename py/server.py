@@ -28,7 +28,8 @@ class BaseHandler(web.RequestHandler):
 
   def write_error(self, status_code):
     self.set_header('Content-Type', 'text/plain')
-    self.finish('{ "message" : "%s" }' % self.error.message)
+    self.finish('{ "message" : "%s", "status" : "%s" }'
+      % (self.error.message, status_code))
 
 class _404Handler(BaseHandler):
   def prepare(self):
@@ -109,7 +110,7 @@ class ReadingListHandler(BaseHandler):
     try:
       reader = self.get_logged_user()
       if not reader:
-        raise g.AppException('auth_failed')
+        raise utils.AppException('auth_failed')
       session = sessionmaker(bind=Base.metadata.bind)()
 
       article_list = []
@@ -210,7 +211,7 @@ class AddHandler(BaseHandler):
     try:
       self.reader = self.get_logged_user()
       if not self.reader:
-        raise g.AppException('auth_failed')
+        raise utils.AppException('auth_failed')
 
       self.session = sessionmaker(bind=Base.metadata.bind)()
 
