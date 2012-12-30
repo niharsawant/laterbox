@@ -10,7 +10,7 @@ from lib.asyncs3 import AWSAuthConnection
 
 import utils
 from model import *
-from lib import shortner
+from lib import base62
 
 class BaseHandler(web.RequestHandler):
   def get_logged_user(self):
@@ -115,7 +115,7 @@ class ReadingListHandler(BaseHandler):
       article_list = []
       for assoc in reader.article_reader_assoc:
         article_list.append(dict(
-          id = shortner.from_decimal(assoc.article.id),
+          id = base62.from_decimal(assoc.article.id),
           url = assoc.article.url,
           title = assoc.article.title,
           description = assoc.article.description,
@@ -156,7 +156,7 @@ class ArticleHandler(BaseHandler):
       self.uid = id
 
       self.session = sessionmaker(bind=Base.metadata.bind)()
-      article_id = shortner.to_decimal(self.uid)
+      article_id = base62.to_decimal(self.uid)
       self.article = self.session.query(Article).filter_by(id=article_id).one()
 
       aws = AWSAuthConnection(utils.AWS_ACESS_KEY, utils.AWS_SECRET, is_secure=False)
