@@ -137,13 +137,7 @@ class ReadingListHandler(BaseHandler):
 
       article_list = []
       for assoc in reader.article_reader_assoc:
-        article_list.append(dict(
-          id = base62.from_decimal(assoc.article.id),
-          url = assoc.article.url,
-          title = assoc.article.title,
-          description = assoc.article.description,
-          created_tstamp = assoc.article.created_tstamp.strftime(utils.DATETIME_FORMAT)
-        ))
+        article_list.append(assoc.article.to_dict())
 
       self.finish(json.dumps(article_list))
     except Exception, e:
