@@ -23,9 +23,6 @@
     Article.prototype.relations = [];
 
     Article.prototype.validate = function(attributes) {
-      if (attributes.id === null) {
-        return 'id can not be null';
-      }
       if (attributes.url === null) {
         return 'URL can not be empty';
       }

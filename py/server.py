@@ -172,12 +172,48 @@ class ArticleHandler(BaseHandler):
         created_tstamp = self.article.created_tstamp.strftime(utils.DATETIME_FORMAT)
       )
 
-      self.write(json.dumps(params))
-      self.finish()
+      self.finish(json.dumps(params))
     except Exception, e:
       self.log_error(e)
     finally:
       self.session.close()
+
+  def s3_upload_complete(self, response):
+    try:
+      from lxml import html
+
+      info = html.document_fromstring(self.article_body).text_content().strip()[:500]
+      article = Article(self.url, self.article_md5,
+        title=self.article_title, description=info)
+      self.session.add(article)
+      self.session.commit()
+
+      self.reader.add_article(self.session, article)
+      self.finish(json.dumps(article.to_dict()))
+    except Exception, e:
+      self.log_error(e)
+
+  def uploadToS3(self):
+    try:
+      import hashlib
+
+      self.article_body = self.article_body
+      self.article_md5 = hashlib.md5(self.article_body).hexdigest()
+
+      article = self.session.query(Article).filter_by(md5_hash=self.article_md5).first()
+      if article :
+        self.reader.add_article(self.session, article)
+        self.finish(json.dumps(article.to_dict()))
+        return
+
+      aws = AWSAuthConnection(utils.AWS_ACESS_KEY, utils.AWS_SECRET, is_secure=False)
+      aws.put(utils.BUCKET_NAME, utils.AWS_ARTICLE_DIR+self.article_md5, self.article_body,
+        {'Content-Type' : 'text/html', 'x-amz-acl' : 'public-read'},
+        callback=self.s3_upload_complete
+      )
+
+    except Exception, e:
+      self.log_error(e)
 
   @web.asynchronous
   def get(self, id):
@@ -196,44 +232,6 @@ class ArticleHandler(BaseHandler):
       self.log_error(e)
       self.session.close()
 
-class AddHandler(BaseHandler):
-  def s3_upload_complete(self, response):
-    try:
-      from lxml import html
-
-      info = html.document_fromstring(self.article_body).text_content().strip()[:500]
-      article = Article(self.url, self.article_md5,
-        title=self.article_title, description=info)
-      self.session.add(article)
-      self.session.commit()
-
-      self.reader.add_article(self.session, article)
-      self.redirect('/')
-    except Exception, e:
-      self.log_error(e)
-
-  def uploadToS3(self):
-    try:
-      import hashlib
-
-      self.article_body = self.article_body
-      self.article_md5 = hashlib.md5(self.article_body).hexdigest()
-
-      article = self.session.query(Article).filter_by(md5_hash=self.article_md5).first()
-      if article :
-        self.reader.add_article(self.session, article)
-        self.redirect('/')
-        return
-
-      aws = AWSAuthConnection(utils.AWS_ACESS_KEY, utils.AWS_SECRET, is_secure=False)
-      aws.put(utils.BUCKET_NAME, utils.AWS_ARTICLE_DIR+self.article_md5, self.article_body,
-        {'Content-Type' : 'text/html', 'x-amz-acl' : 'public-read'},
-        callback=self.s3_upload_complete
-      )
-
-    except Exception, e:
-      self.log_error(e)
-
   @web.asynchronous
   def post(self):
     try:
@@ -247,7 +245,7 @@ class AddHandler(BaseHandler):
       article = self.session.query(Article).filter_by(url=url).first()
       if article :
         self.reader.add_article(self.session, article)
-        self.redirect('/')
+        self.finish(json.dumps(article.to_dict()))
         return
 
       doc = urllib.urlopen(url)
@@ -257,14 +255,13 @@ class AddHandler(BaseHandler):
       article = self.session.query(Article).filter_by(url=self.url).first()
       if article :
         self.reader.add_article(self.session, article)
-        self.redirect('/')
+        self.finish(json.dumps(article.to_dict()))
         return
 
       self.article_body = Document(html).summary().encode('utf-8')
       self.article_title = Document(html).short_title()
 
       self.uploadToS3()
-
     except Exception, e:
       self.log_error(e)
 
@@ -275,8 +272,10 @@ settings = dict(
 
 handler_list = [
   ('/', MainHandler),
-  ('/add', AddHandler),
+
   ('/article/(.*)', ArticleHandler),
+  ('/article', ArticleHandler),
+
   ('/read', ReadingListHandler),
   ('/getcreds', CredentialHandler),
   ('/welcome', WelcomeHandler),

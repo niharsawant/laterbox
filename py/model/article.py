@@ -2,8 +2,10 @@ from datetime import datetime
 
 from sqlalchemy import *
 from sqlalchemy.orm import *
+from lib import base62
 
 import model
+import utils
 
 class Article(model.Base):
   __tablename__ = 'article'
@@ -18,6 +20,15 @@ class Article(model.Base):
   created_tstamp = Column(DateTime, default=datetime.utcnow)
 
   article_reader_assoc = relationship('ArticleReader', lazy='joined')
+
+  def to_dict(self):
+    return dict(
+      id = base62.from_decimal(self.id),
+      url = self.url,
+      title = self.title,
+      description = self.description,
+      created_tstamp = self.created_tstamp.strftime(utils.DATETIME_FORMAT)
+    )
 
   def __init__(self, url, md5_hash, title=None, description=None):
     self.url = url

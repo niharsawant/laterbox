@@ -4,10 +4,8 @@ class AppPrefView extends Backbone.View
   render : () ->
     prefTemplate = _.template('
       <ul>
-        <form action="/add" method="post" accept-charset="utf-8">
-          <input type="text" name="url" value=""> <br>
-          <input type="submit" name="" value="Submit">
-        </form>
+        <input id="readpref-url" type="text" name="url" value=""> <br>
+        <input id="readpref-submiturl" type="button" name="" value="Submit">
       </ul>
     ')
 
@@ -16,8 +14,17 @@ class AppPrefView extends Backbone.View
 
   events :
     'click' : 'onClick'
+    'click #readpref-submiturl' : 'onSubmit'
 
   onClick : (ev) -> ev.stopPropagation()
+  # prevents invoking of click of document registred in app view
+
+  onSubmit : (ev) ->
+    params = url : @$('#readpref-url').val()
+    app.user.get('unreads').create(params,
+      success : (model, response) ->
+        console.log(model)
+    )
 
   show : () ->
     $(@el).removeClass('readpref-inactive').addClass('readpref-active')

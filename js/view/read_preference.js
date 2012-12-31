@@ -17,10 +17,8 @@
       var prefTemplate;
       prefTemplate = _.template('\
       <ul>\
-        <form action="/add" method="post" accept-charset="utf-8">\
-          <input type="text" name="url" value=""> <br>\
-          <input type="submit" name="" value="Submit">\
-        </form>\
+        <input id="readpref-url" type="text" name="url" value=""> <br>\
+        <input id="readpref-submiturl" type="button" name="" value="Submit">\
       </ul>\
     ');
       $(this.el).html(prefTemplate());
@@ -28,11 +26,24 @@
     };
 
     AppPrefView.prototype.events = {
-      'click': 'onClick'
+      'click': 'onClick',
+      'click #readpref-submiturl': 'onSubmit'
     };
 
     AppPrefView.prototype.onClick = function(ev) {
       return ev.stopPropagation();
+    };
+
+    AppPrefView.prototype.onSubmit = function(ev) {
+      var params;
+      params = {
+        url: this.$('#readpref-url').val()
+      };
+      return app.user.get('unreads').create(params, {
+        success: function(model, response) {
+          return console.log(model);
+        }
+      });
     };
 
     AppPrefView.prototype.show = function() {
