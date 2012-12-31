@@ -20,6 +20,8 @@
 
     Article.prototype.urlRoot = '/article';
 
+    Article.prototype.relations = [];
+
     Article.prototype.validate = function(attributes) {
       if (attributes.id === null) {
         return 'id can not be null';
@@ -31,7 +33,7 @@
 
     return Article;
 
-  })(Backbone.Model);
+  })(Backbone.RelationalModel);
 
   window.Article = Article;
 

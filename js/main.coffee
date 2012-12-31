@@ -1,24 +1,11 @@
-$(document).ready(() ->
-  window.app =
-    views : {}
-    collections : {}
-    router : {}
-    currListType : null
-
-  app.views.main = new AppView(el : $ 'body')
-  app.views.desk = new DeskView(el : $ '#container')
-  app.views.couch = new CouchView(el : $ '#reader')
-  app.views.readPreference = new AppPrefView(el : $ '#readpref')
-
+startRouter = () ->
   app.router = new AppRouter()
-
   app.router.on('route:getReadingList', (action, page) ->
     app.currListType = action
     switch action
       when 'unread'
-        app.collections.unread = new UnreadCollection()
         app.views.desk.render()
-        app.collections.unread.fetch(
+        app.user.get('unreads').fetch(
           success : (collection, response, options) ->
             console.log('fetched unread items')
             app.views.desk.render()
@@ -33,7 +20,7 @@ $(document).ready(() ->
   )
   app.router.on('route:getArticle', (id) ->
     getArticle = () =>
-      article = app.collections.unread.get(id)
+      article = app.user.get('unreads').get(id)
       article.set('isLoading' : true)
       article.fetch(
         success : (model, response) =>
@@ -47,9 +34,8 @@ $(document).ready(() ->
     if app.collections.unread then getArticle()
     else
       app.currListType = 'unread'
-      app.collections.unread = new UnreadCollection()
       app.views.desk.render()
-      app.collections.unread.fetch(
+      app.user.get('unreads').fetch(
         success : (collection, response, options) ->
           console.log('fetched unread items')
           app.views.desk.render()
@@ -58,9 +44,33 @@ $(document).ready(() ->
           console.log(JSON.parse(err.responseText))
       )
   )
+  Backbone.history.start()
+
+  if not Backbone.history.fragment
+    Backbone.history.navigate('unread', trigger : true)
+
+
+$(document).ready(() ->
+  window.app =
+    views : {}
+    collections : {}
+    router : {}
+    currListType : null
+
+  app.views.main = new AppView(el : $ 'body')
+  app.views.desk = new DeskView(el : $ '#container')
+  app.views.couch = new CouchView(el : $ '#reader')
+  app.views.readPreference = new AppPrefView(el : $ '#readpref')
+
+  app.user = new User()
+  app.user.fetch(
+    success : (model, response) ->
+      startRouter()
+    error : (e) ->
+      console.error(e)
+  )
 
   app.views.main.render()
-  Backbone.history.start()
 
   return true
 )

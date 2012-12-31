@@ -1,32 +1,14 @@
 (function() {
+  var startRouter;
 
-  $(document).ready(function() {
-    window.app = {
-      views: {},
-      collections: {},
-      router: {},
-      currListType: null
-    };
-    app.views.main = new AppView({
-      el: $('body')
-    });
-    app.views.desk = new DeskView({
-      el: $('#container')
-    });
-    app.views.couch = new CouchView({
-      el: $('#reader')
-    });
-    app.views.readPreference = new AppPrefView({
-      el: $('#readpref')
-    });
+  startRouter = function() {
     app.router = new AppRouter();
     app.router.on('route:getReadingList', function(action, page) {
       app.currListType = action;
       switch (action) {
         case 'unread':
-          app.collections.unread = new UnreadCollection();
           app.views.desk.render();
-          app.collections.unread.fetch({
+          app.user.get('unreads').fetch({
             success: function(collection, response, options) {
               console.log('fetched unread items');
               return app.views.desk.render();
@@ -47,7 +29,7 @@
         _this = this;
       getArticle = function() {
         var article;
-        article = app.collections.unread.get(id);
+        article = app.user.get('unreads').get(id);
         article.set({
           'isLoading': true
         });
@@ -70,9 +52,8 @@
         return getArticle();
       } else {
         app.currListType = 'unread';
-        app.collections.unread = new UnreadCollection();
         app.views.desk.render();
-        return app.collections.unread.fetch({
+        return app.user.get('unreads').fetch({
           success: function(collection, response, options) {
             console.log('fetched unread items');
             app.views.desk.render();
@@ -84,8 +65,43 @@
         });
       }
     });
-    app.views.main.render();
     Backbone.history.start();
+    if (!Backbone.history.fragment) {
+      return Backbone.history.navigate('unread', {
+        trigger: true
+      });
+    }
+  };
+
+  $(document).ready(function() {
+    window.app = {
+      views: {},
+      collections: {},
+      router: {},
+      currListType: null
+    };
+    app.views.main = new AppView({
+      el: $('body')
+    });
+    app.views.desk = new DeskView({
+      el: $('#container')
+    });
+    app.views.couch = new CouchView({
+      el: $('#reader')
+    });
+    app.views.readPreference = new AppPrefView({
+      el: $('#readpref')
+    });
+    app.user = new User();
+    app.user.fetch({
+      success: function(model, response) {
+        return startRouter();
+      },
+      error: function(e) {
+        return console.error(e);
+      }
+    });
+    app.views.main.render();
     return true;
   });
 

@@ -20,7 +20,7 @@
         _this = this;
       $(this.el).height($(window).height() - 60);
       if (app.views.desk && app.currListType === 'unread') {
-        list = app.collections.unread;
+        list = app.user.get('unreads');
       } else {
         list = null;
       }

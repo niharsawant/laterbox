@@ -86,6 +86,24 @@ class WelcomeHandler(BaseHandler):
     finally:
       session.close()
 
+class CredentialHandler(BaseHandler):
+  def get(self):
+    try:
+      reader = self.get_logged_user()
+      if not reader:
+        raise utils.AppException('auth_failed')
+
+      params = dict(
+        firstname = reader.firstname,
+        lastname = reader.lastname,
+        email = reader.email,
+        joined = reader.created_tstamp.strftime(utils.DATETIME_FORMAT)
+      )
+
+      self.finish(json.dumps(params))
+    except Exception, e:
+      self.log_error(e)
+
 class LogoutHandler(BaseHandler):
   def get(self):
     self.clear_all_cookies()
@@ -123,11 +141,10 @@ class ReadingListHandler(BaseHandler):
           created_tstamp = assoc.article.created_tstamp.strftime(utils.DATETIME_FORMAT)
         ))
 
-      self.write(json.dumps(article_list))
-      session.close()
-      self.finish()
+      self.finish(json.dumps(article_list))
     except Exception, e:
       self.log_error(e)
+    finally:
       session.close()
 
 class ArticleHandler(BaseHandler):
@@ -250,6 +267,7 @@ handler_list = [
   ('/add', AddHandler),
   ('/article/(.*)', ArticleHandler),
   ('/read', ReadingListHandler),
+  ('/getcreds', CredentialHandler),
   ('/welcome', WelcomeHandler),
   ('/logout', LogoutHandler),
 

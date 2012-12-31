@@ -1,4 +1,4 @@
-class Article extends Backbone.Model
+class Article extends Backbone.RelationalModel
   defaults :
     id          : null
     title       : ''
@@ -6,6 +6,8 @@ class Article extends Backbone.Model
     description : ''
 
   urlRoot : '/article'
+
+  relations : []
 
   validate : (attributes) ->
     if attributes.id is null then return 'id can not be null'

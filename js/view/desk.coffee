@@ -5,7 +5,7 @@ class DeskView extends Backbone.View
     $(@el).height($(window).height()-60)
 
     if app.views.desk and app.currListType is 'unread'
-      list = app.collections.unread
+      list = app.user.get('unreads')
     else list = null
 
     @$('#desk').empty()
