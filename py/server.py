@@ -104,14 +104,7 @@ class CredentialHandler(BaseHandler):
       if not reader:
         raise utils.AppException('auth_failed')
 
-      params = dict(
-        firstname = reader.firstname,
-        lastname = reader.lastname,
-        email = reader.email,
-        joined = reader.created_tstamp.strftime(utils.DATETIME_FORMAT)
-      )
-
-      self.finish(json.dumps(params))
+      self.finish(json.dumps(reader.to_dict()))
     except Exception, e:
       self.log_error(e)
 
