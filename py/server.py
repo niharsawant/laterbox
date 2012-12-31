@@ -31,6 +31,17 @@ class BaseHandler(web.RequestHandler):
     self.finish('{ "message" : "%s", "status" : "%s" }'
       % (self.error.message, status_code))
 
+  def get_argument(self, name, default=None, strip=True):
+    try:
+      if self.request.headers.get("Content-Type") == "application/json":
+        return json.loads(self.request.body)[name]
+      return super(self, name, default=default, strip=strip)
+
+    except KeyError, e:
+      return None
+    except Exception, e:
+      raise e
+
 class _404Handler(BaseHandler):
   def prepare(self):
     self.error = httpclient.HTTPError(404, 'Page Not Found')
