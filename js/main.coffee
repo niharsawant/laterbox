@@ -47,7 +47,7 @@ startRouter = () ->
   Backbone.history.start()
 
   if not Backbone.history.fragment
-    Backbone.history.navigate('unread', trigger : true)
+    Backbone.history.navigate('/#/unread', trigger : true)
 
 
 $(document).ready(() ->

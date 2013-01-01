@@ -67,7 +67,7 @@
     });
     Backbone.history.start();
     if (!Backbone.history.fragment) {
-      return Backbone.history.navigate('unread', {
+      return Backbone.history.navigate('/#/unread', {
         trigger: true
       });
     }
