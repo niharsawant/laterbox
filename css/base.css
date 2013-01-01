@@ -139,7 +139,7 @@ input[type="text"]:focus {
   display: inline-table;
 }
 .list-horz li {
-  display: inline;
+  display: table-cell;
 }
 #nav-topbar {
   font-size: 12px;
