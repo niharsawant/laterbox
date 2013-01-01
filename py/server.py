@@ -31,11 +31,11 @@ class BaseHandler(web.RequestHandler):
     self.finish('{ "message" : "%s", "status" : "%s" }'
       % (self.error.message, status_code))
 
-  def get_argument(self, name, default=None, strip=True):
+  def get_argument(self, name, *args, **kwargs):
     try:
       if self.request.headers.get("Content-Type") == "application/json":
         return json.loads(self.request.body)[name]
-      return super(self, name, default=default, strip=strip)
+      return super(BaseHandler, self).get_argument(name, *args, **kwargs)
 
     except KeyError, e:
       return None
@@ -58,6 +58,8 @@ class WelcomeHandler(BaseHandler):
 
   def post(self):
     try:
+      session = sessionmaker(bind=Base.metadata.bind)()
+
       email = self.get_argument('email', None)
       password = self.get_argument('password', None)
       signup_type = self.get_argument('type', None)
@@ -65,8 +67,6 @@ class WelcomeHandler(BaseHandler):
       if not email: raise utils.AppException('empty_email')
       if not password: raise utils.AppException('empty_password')
       if not signup_type: raise utils.AppException('empty_type')
-
-      session = sessionmaker(bind=Base.metadata.bind)()
 
       import hashlib
 
